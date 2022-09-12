@@ -16,13 +16,13 @@ const config: Config = {
 };
 
 const App = ({ Component, pageProps }) => (
-  <DAppProvider config={config}>
-    <CacheProvider value={cache}>
+  <CacheProvider value={cache}>
+    <DAppProvider config={config}>
       {globalStyles}
       <Account />
       <Component {...pageProps} />
-    </CacheProvider>
-  </DAppProvider>
+    </DAppProvider>
+  </CacheProvider>
 );
 
 export default App;
