@@ -22,7 +22,6 @@ export default function useChains() {
     chainId,
     handleSwitchToPoS,
     handleSwitchToPoW,
-    // TODO: update with production values.
     isPoS: chainId === PoS.chainId,
     isPoW: chainId === PoW.chainId,
     isETHAtAll: chainId === PoS.chainId || chainId === PoW.chainId,

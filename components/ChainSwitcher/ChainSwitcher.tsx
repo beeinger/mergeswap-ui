@@ -11,9 +11,8 @@ export default function ChainSwitcher() {
 
   return (
     <StyledChainSwitcher>
-      {/* //! change 5 to 1001 */}
       <Option
-        isActive={isPoW}
+        isActive={account && isPoW}
         title={isPoW ? "You're on PoW ETH" : "Switch to PoW ETH"}
         onClick={handleSwitchToPoW}
       >
@@ -27,7 +26,7 @@ export default function ChainSwitcher() {
           : "CONNECT WALLET"}
       </Center>
       <Option
-        isActive={isPoS}
+        isActive={account && isPoS}
         title={isPoS ? "You're on PoS ETH" : "Switch to PoS ETH"}
         onClick={handleSwitchToPoS}
       >
