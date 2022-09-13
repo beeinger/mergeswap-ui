@@ -11,6 +11,9 @@ export const globalStyles = (
         margin: 0;
         color: white;
         min-height: 100%;
+
+        font-family: "Inter", sans-serif;
+        font-weight: 500;
       }
 
       html {

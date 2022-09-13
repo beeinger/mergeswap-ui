@@ -12,6 +12,7 @@ export default function PathSwitcher({
 }) {
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) =>
     setPath(e.currentTarget.textContent as Path);
+
   return (
     <StyledPathSwitcher>
       <PathOption
@@ -20,6 +21,13 @@ export default function PathSwitcher({
         onClick={handleClick}
       >
         {"PoW->PoS"}
+      </PathOption>
+      <PathOption
+        title="Read about the app"
+        isActive={path !== "PoW->PoS" && path !== "PoS->PoW"}
+        onClick={handleClick}
+      >
+        Info
       </PathOption>
       <PathOption
         title="Switch to moving tokens from PoS to PoW"

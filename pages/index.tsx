@@ -2,6 +2,7 @@ import useChains, { ChainsContext } from "shared/useChains";
 
 import ChainSwitcher from "components/ChainSwitcher";
 import Head from "next/head";
+import NoPathChosenYet from "components/NoPathChosenYet";
 import PathSwitcher from "components/PathSwitcher";
 import PoSToPoW from "components/PoSToPoW";
 import PoWToPoS from "components/PoWToPoS";
@@ -13,7 +14,7 @@ import usePath from "shared/usePath";
 export default function Index() {
   const chains = useChains();
   const { account } = useEthers();
-  const [path, setPath] = usePath();
+  const [path, setPath] = usePath(!account || !chains.isETHAtAll);
 
   return (
     <>
@@ -47,18 +48,16 @@ export default function Index() {
       <ChainsContext.Provider value={chains}>
         <ChainSwitcher />
         <MainContainer>
-          {account ? (
-            chains.isETHAtAll ? (
-              <Path>
-                <PathSwitcher path={path} setPath={setPath} />
-                {path === "PoW->PoS" ? <PoWToPoS /> : <PoSToPoW />}
-              </Path>
+          <Path>
+            <PathSwitcher path={path} setPath={setPath} />
+            {path === "PoW->PoS" ? (
+              <PoWToPoS />
+            ) : path === "PoS->PoW" ? (
+              <PoSToPoW />
             ) : (
-              "Switch to PoW or PoS ETH"
-            )
-          ) : (
-            "Connect your wallet"
-          )}
+              <NoPathChosenYet setPath={setPath} />
+            )}
+          </Path>
         </MainContainer>
       </ChainsContext.Provider>
     </>
@@ -87,14 +86,14 @@ const Path = styled.div`
 
   position: relative;
 
-  justify-content: center;
+  /* justify-content: center; */
   text-align: center;
 
   background: #191b1f;
   border-radius: 16px;
 
   padding: 48px;
-  min-width: 40%;
+  padding-top: 16px;
   min-height: 200px;
 
   box-shadow: rgb(0 0 0 / 1%) 0px 0px 1px, rgb(0 0 0 / 4%) 0px 4px 8px,
