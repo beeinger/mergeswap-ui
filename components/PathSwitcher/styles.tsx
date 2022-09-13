@@ -12,6 +12,10 @@ export const StyledPathSwitcher = styled(StyledChainSwitcher)`
 
   box-shadow: rgb(0 0 0 / 1%) 0px 0px 1px, rgb(0 0 0 / 4%) 0px 2px 4px,
     rgb(0 0 0 / 4%) 0px 4px 6px, rgb(0 0 0 / 1%) 0px 6px 8px;
+
+  @media (max-width: 685px) {
+    top: 0;
+  }
 `;
 
 export const PathOption = styled(Option)`

@@ -72,7 +72,7 @@ const MainContainer = styled.div`
   display: flex;
   justify-content: center;
 
-  margin-top: calc(20% + 2rem);
+  margin-top: calc(15% + 2rem);
 
   @media (max-width: 685px) {
     margin-top: calc(40% + 2rem);

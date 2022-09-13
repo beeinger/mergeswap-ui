@@ -9,6 +9,7 @@ export const AccountStyled = styled(StyledChainSwitcher)`
   transform: none;
 
   @media (max-width: 685px) {
+    top: 16px;
     left: 50%;
     transform: translateX(-50%);
   }
