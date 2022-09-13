@@ -2,9 +2,13 @@ import styled from "@emotion/styled";
 
 export const StyledChainSwitcher = styled.div`
   position: absolute;
-  top: 8px;
+  top: 16px;
   left: 50%;
   transform: translateX(-50%);
+
+  @media (max-width: 685px) {
+    top: 80px;
+  }
 
   font-family: "Inter", sans-serif;
   font-weight: 500;
@@ -13,13 +17,17 @@ export const StyledChainSwitcher = styled.div`
   justify-content: space-evenly;
   align-items: center;
 
-  background: grey;
+  background: #191b1f;
   border-radius: 100000px;
-  padding: 1px;
+  /* border: 1px solid #2f3336; */
+  padding: 4px;
+
+  box-shadow: rgb(0 0 0 / 1%) 0px 0px 1px, rgb(0 0 0 / 4%) 0px 4px 8px,
+    rgb(0 0 0 / 4%) 0px 16px 24px, rgb(0 0 0 / 1%) 0px 24px 32px;
 `;
 
 export const Option = styled.div<{ isActive: boolean }>`
-  background: ${({ isActive }) => (isActive ? "black" : "transparent")};
+  background: ${({ isActive }) => (isActive ? "#212429" : "transparent")};
   opacity: ${({ isActive }) => (isActive ? 1 : 0.5)};
 
   border-radius: 100000px;
@@ -31,12 +39,12 @@ export const Option = styled.div<{ isActive: boolean }>`
   }
 `;
 
-export const Center = styled.div<{ onClick: any }>`
+export const Center = styled.div<{ onClick?: any }>`
   border-radius: 100000px;
   padding: 10px 16px;
 
   cursor: ${({ onClick }) => (onClick ? "pointer" : "default")};
-  background: ${({ onClick }) => (onClick ? "black" : "transparent")};
+  background: ${({ onClick }) => (onClick ? "#212429" : "transparent")};
 
   :hover {
     opacity: ${({ onClick }) => (onClick ? 0.75 : 1)};

@@ -1,19 +1,30 @@
-import React from "react";
+import { AccountAddress, AccountDisconnect, AccountStyled } from "./styles";
 import { shortenAddress, useEthers } from "@usedapp/core";
 
-import { AccountStyled } from "./styles";
+import { AiOutlineDisconnect } from "react-icons/ai";
+import React from "react";
+import { toast } from "react-toastify";
 
 export default function Account() {
   const { account, deactivate } = useEthers();
 
   return (
-    <AccountStyled>
-      {account && (
-        <>
-          <div>Account: {shortenAddress(account)}</div>
-          <button onClick={deactivate}>Disconnect</button>
-        </>
-      )}
-    </AccountStyled>
+    account && (
+      <AccountStyled>
+        <AccountAddress
+          title="Copy address"
+          isActive={false}
+          onClick={async () => {
+            await navigator.clipboard.writeText(account);
+            toast.dark("Address copied to clipboard!");
+          }}
+        >
+          {shortenAddress(account)}
+        </AccountAddress>
+        <AccountDisconnect title="Disconnect wallet" onClick={deactivate}>
+          <AiOutlineDisconnect />
+        </AccountDisconnect>
+      </AccountStyled>
+    )
   );
 }

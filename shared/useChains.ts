@@ -1,13 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
+import { NativeCurrency } from "./types";
 import { createContext } from "react";
 import { useEthers } from "@usedapp/core";
-
-type NativeCurrency = {
-  name: string;
-  symbol: string; // 2-6 characters long
-  decimals: 18;
-};
 
 const handleChainChange = async (
   chainId: string,
@@ -89,6 +84,10 @@ export default function useChains() {
         window.location.reload();
       }
     });
+
+    return () => {
+      window.ethereum.removeAllListeners("networkChanged");
+    };
   }, []);
 
   const handleSwitchToPoS = async () => {
