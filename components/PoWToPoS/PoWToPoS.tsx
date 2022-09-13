@@ -24,7 +24,10 @@ export default function PoWToPoS() {
       transactionName: "Deposit POWETH",
     }
   );
-  useWrapTxInToasts(state, resetState);
+  useWrapTxInToasts(state, () => {
+    console.log("do something when tx is done");
+    resetState();
+  });
 
   const handleDeposit = () =>
     send(utils.parseEther(poWEthAmount), account, {

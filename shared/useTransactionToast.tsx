@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 export default function useWrapTxInToasts(
   state: TransactionStatus,
-  resetState: () => void
+  callback: () => void
 ) {
   const toastId = React.useRef(null);
   const progress = useMemo(() => {
@@ -48,8 +48,7 @@ export default function useWrapTxInToasts(
           }
         );
 
-      resetState();
-      return;
+      return callback();
     }
     // Handle transaction progress
     const render = (
