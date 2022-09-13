@@ -1,12 +1,12 @@
+import { PoS, PoW } from "./chains/custom";
+
 import { createContext } from "react";
 import { useEthers } from "@usedapp/core";
-import { PoS, PoW } from "./chains/custom";
 
 export const ChainsContext = createContext<ReturnType<typeof useChains>>(null);
 
 export default function useChains() {
-  const { account, activateBrowserWallet, chainId, switchNetwork } =
-    useEthers();
+  const { activateBrowserWallet, chainId, switchNetwork } = useEthers();
 
   const handleSwitchToPoS = async () => {
       switchNetwork(PoS.chainId);
@@ -18,8 +18,6 @@ export default function useChains() {
     };
 
   return {
-    account,
-    chainId,
     handleSwitchToPoS,
     handleSwitchToPoW,
     isPoS: chainId === PoS.chainId,

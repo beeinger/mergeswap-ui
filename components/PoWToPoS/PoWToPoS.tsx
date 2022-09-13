@@ -1,31 +1,35 @@
 import React, { useContext, useState } from "react";
-import { utils } from "ethers";
-import { Contract } from "@ethersproject/contracts";
+import { useContractFunction, useEthers } from "@usedapp/core";
+
 import { ChainsContext } from "shared/useChains";
-import { useContractFunction } from "@usedapp/core";
+import { Contract } from "@ethersproject/contracts";
+import useWrapTxInToasts from "shared/useTransactionToast";
+import { utils } from "ethers";
 
 const depositPowInterface = new utils.Interface([
-  "function deposit(uint256 amount, address recipient) payable",
-]);
-const depositPowAddress = process.env.NEXT_PUBLIC_DEPOSIT_POW_ADDRESS;
-const depositPowContract = new Contract(depositPowAddress, depositPowInterface);
+    "function deposit(uint256 amount, address recipient) payable",
+  ]),
+  depositPowAddress = process.env.NEXT_PUBLIC_DEPOSIT_POW_ADDRESS,
+  depositPowContract = new Contract(depositPowAddress, depositPowInterface);
 
 export default function PoWToPoS() {
-  const { account, isPoW } = useContext(ChainsContext);
+  const { isPoW } = useContext(ChainsContext);
+  const { account } = useEthers();
   const [poWEthAmount, setPoWEthAmount] = useState("");
 
-  const { state, send } = useContractFunction(depositPowContract, "deposit", {
-    transactionName: "Deposit POWETH",
-  });
+  const { state, send, resetState } = useContractFunction(
+    depositPowContract,
+    "deposit",
+    {
+      transactionName: "Deposit POWETH",
+    }
+  );
+  useWrapTxInToasts(state, resetState);
 
-  console.log(state);
-
-  const handleDeposit = () => {
-    console.log("handling deposit", poWEthAmount, account);
+  const handleDeposit = () =>
     send(utils.parseEther(poWEthAmount), account, {
       value: utils.parseEther(poWEthAmount),
     });
-  };
 
   return isPoW ? (
     //? Always active (or when someone has any ETH on PoW)
@@ -36,7 +40,10 @@ export default function PoWToPoS() {
         onChange={(e) => setPoWEthAmount(e.target.value)}
         value={poWEthAmount}
       />
-      <button disabled={!account} onClick={handleDeposit}>
+      <button
+        disabled={!account || state.status !== "None"}
+        onClick={handleDeposit}
+      >
         confirm
       </button>
     </div>
