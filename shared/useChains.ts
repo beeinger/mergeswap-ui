@@ -3,6 +3,7 @@ import { useEthers } from "@usedapp/core";
 
 export const ChainsContext = createContext<ReturnType<typeof useChains>>(null);
 
+// TODO: update with production values.
 const POS_CHAIN_ID = 80001,
   POW_CHAIN_ID = 5;
 
@@ -22,7 +23,6 @@ export default function useChains() {
     chainId,
     handleSwitchToPoS,
     handleSwitchToPoW,
-    // TODO: update with production values.
     isPoS: chainId === POS_CHAIN_ID,
     isPoW: chainId === POW_CHAIN_ID,
     isETHAtAll: chainId === POS_CHAIN_ID || chainId === POW_CHAIN_ID,
