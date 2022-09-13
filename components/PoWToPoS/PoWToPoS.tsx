@@ -4,7 +4,7 @@ import { ChainsContext } from "shared/useChains";
 
 export default function PoWToPoS() {
   const { isPoW } = useContext(ChainsContext);
-  const [ethAmount, setEthAmount] = useState("");
+  const [poWEthAmount, setPoWEthAmount] = useState("");
 
   return isPoW ? (
     //? Always active (or when someone has any ETH on PoW)
@@ -12,8 +12,8 @@ export default function PoWToPoS() {
       <h4>Send PoW ETH to PoS</h4>
       <input
         placeholder="ETH amount"
-        onChange={(e) => setEthAmount(e.target.value)}
-        value={ethAmount}
+        onChange={(e) => setPoWEthAmount(e.target.value)}
+        value={poWEthAmount}
       />
       <button>confirm</button>
     </div>
@@ -21,7 +21,12 @@ export default function PoWToPoS() {
     //? Should be active only when someone has sent PoW ETH to PoS
     <div>
       <h4>Mint PoW ETH you&apos;ve sent to PoS</h4>
-      <button>mint {ethAmount || "11.2"}</button>
+      <input
+        placeholder="PoW ETH amount"
+        onChange={(e) => setPoWEthAmount(e.target.value)}
+        value={poWEthAmount}
+      />
+      <button>mint</button>
     </div>
   );
 }

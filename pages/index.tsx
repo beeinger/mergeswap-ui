@@ -1,16 +1,18 @@
+import React, { useState } from "react";
 import useChains, { ChainsContext } from "shared/useChains";
 
 import ChainSwitcher from "components/ChainSwitcher";
 import Head from "next/head";
+import PathSwitcher from "components/PathSwitcher";
 import PoSToPoW from "components/PoSToPoW";
 import PoWToPoS from "components/PoWToPoS";
-import React from "react";
 import styled from "@emotion/styled";
 import { useEthers } from "@usedapp/core";
 
 export default function Index() {
   const { account } = useEthers();
   const chains = useChains();
+  const [path, setPath] = useState<"PoW->PoS" | "PoS->PoW">("PoW->PoS");
 
   return (
     <>
@@ -46,16 +48,10 @@ export default function Index() {
         <MainContainer>
           {account ? (
             chains.isETHAtAll ? (
-              <>
-                <Column>
-                  <h3>PoW {"->"} PoS</h3>
-                  <PoWToPoS />
-                </Column>
-                <Column>
-                  <h3>PoS {"->"} PoW</h3>
-                  <PoSToPoW />
-                </Column>
-              </>
+              <Path>
+                <PathSwitcher path={path} setPath={setPath} />
+                {path === "PoW->PoS" ? <PoWToPoS /> : <PoSToPoW />}
+              </Path>
             ) : (
               "Switch to PoW or PoS ETH"
             )
@@ -80,11 +76,10 @@ const MainContainer = styled.div`
   gap: 24px;
 `;
 
-const Column = styled.div`
+const Path = styled.div`
   display: flex;
   flex-direction: column;
+
   justify-content: center;
   text-align: center;
-
-  width: 40%;
 `;
