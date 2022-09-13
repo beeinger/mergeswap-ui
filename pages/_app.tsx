@@ -1,20 +1,25 @@
 import "react-toastify/dist/ReactToastify.css";
 
-import { Config, DAppProvider, Mainnet } from "@usedapp/core";
-import { ToastContainer, toast } from "react-toastify";
+import { Config, DAppProvider, Goerli } from "@usedapp/core";
 
 import Account from "components/Account";
 import { CacheProvider } from "@emotion/react";
 import React from "react";
+import { ToastContainer } from "react-toastify";
 import createCache from "@emotion/cache";
-import { getDefaultProvider } from "ethers";
 import { globalStyles } from "shared/styles";
+import { providers } from "ethers";
 
 const cache = createCache({ key: "next" });
 const config: Config = {
-  readOnlyChainId: Mainnet.chainId,
+  readOnlyChainId: Goerli.chainId,
   readOnlyUrls: {
-    [Mainnet.chainId]: getDefaultProvider("mainnet"),
+    [Goerli.chainId]: new providers.JsonRpcProvider( // Goerli (PoW)
+      process.env.NEXT_PUBLIC_POW_HTTP_PROVIDER
+    ),
+    [80001]: new providers.JsonRpcProvider( // Polygon Mumbai (PoS)
+      process.env.NEXT_PUBLIC_POS_HTTP_PROVIDER
+    ),
   },
 };
 
