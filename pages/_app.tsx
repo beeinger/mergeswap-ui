@@ -1,17 +1,22 @@
-import { Config, DAppProvider, Mainnet } from "@usedapp/core";
+import { Config, DAppProvider, Goerli } from "@usedapp/core";
 
 import Account from "components/Account";
 import { CacheProvider } from "@emotion/react";
-import React from "react";
+import React, { useEffect } from "react";
 import createCache from "@emotion/cache";
-import { getDefaultProvider } from "ethers";
+import { providers } from "ethers";
 import { globalStyles } from "shared/styles";
 
 const cache = createCache({ key: "next" });
 const config: Config = {
-  readOnlyChainId: Mainnet.chainId,
+  readOnlyChainId: Goerli.chainId,
   readOnlyUrls: {
-    [Mainnet.chainId]: getDefaultProvider("mainnet"),
+    [Goerli.chainId]: new providers.JsonRpcProvider( // Goerli (PoW)
+      process.env.NEXT_PUBLIC_POW_HTTP_PROVIDER
+    ),
+    [80001]: new providers.JsonRpcProvider( // Polygon Mumbai (PoS)
+      process.env.NEXT_PUBLIC_POS_HTTP_PROVIDER
+    ),
   },
 };
 

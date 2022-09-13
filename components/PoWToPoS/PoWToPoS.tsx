@@ -6,6 +6,11 @@ export default function PoWToPoS() {
   const { isPoW } = useContext(ChainsContext);
   const [poWEthAmount, setPoWEthAmount] = useState("");
 
+  // @wip
+  const handleDeposit = () => {
+    console.log("handling deposit", poWEthAmount);
+  };
+
   return isPoW ? (
     //? Always active (or when someone has any ETH on PoW)
     <div>
@@ -15,7 +20,7 @@ export default function PoWToPoS() {
         onChange={(e) => setPoWEthAmount(e.target.value)}
         value={poWEthAmount}
       />
-      <button>confirm</button>
+      <button onClick={handleDeposit}>confirm</button>
     </div>
   ) : (
     //? Should be active only when someone has sent PoW ETH to PoS
