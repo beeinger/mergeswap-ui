@@ -7,10 +7,8 @@ import PathSwitcher from "components/PathSwitcher";
 import PoSToPoW from "components/PoSToPoW";
 import PoWToPoS from "components/PoWToPoS";
 import styled from "@emotion/styled";
-import { useEthers } from "@usedapp/core";
 
 export default function Index() {
-  const { account } = useEthers();
   const chains = useChains();
   const [path, setPath] = useState<"PoW->PoS" | "PoS->PoW">("PoW->PoS");
 
@@ -46,7 +44,7 @@ export default function Index() {
       <ChainsContext.Provider value={chains}>
         <ChainSwitcher />
         <MainContainer>
-          {account ? (
+          {chains.account ? (
             chains.isETHAtAll ? (
               <Path>
                 <PathSwitcher path={path} setPath={setPath} />

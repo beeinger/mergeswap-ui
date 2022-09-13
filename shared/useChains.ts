@@ -75,7 +75,7 @@ export const switchToPoS = async () =>
 export const ChainsContext = createContext<ReturnType<typeof useChains>>(null);
 
 export default function useChains() {
-  const { activateBrowserWallet } = useEthers();
+  const { account, activateBrowserWallet } = useEthers();
   const [chainId, setChainId] = useState(undefined);
 
   useEffect(() => {
@@ -101,6 +101,7 @@ export default function useChains() {
     };
 
   return {
+    account,
     chainId,
     handleSwitchToPoS,
     handleSwitchToPoW,
