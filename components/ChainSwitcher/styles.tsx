@@ -1,17 +1,23 @@
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 
-export const StyledChainSwitcher = styled.div`
+export const StyledChainSwitcher = styled.div<{ account?: boolean }>`
   position: absolute;
   top: 16px;
   left: 50%;
   transform: translateX(-50%);
 
-  @media (max-width: 685px) {
-    top: 80px;
-  }
+  ${({ account }) =>
+    account &&
+    css`
+      @media (max-width: 685px) {
+        top: 80px;
+      }
+    `}
 
   font-family: "Inter", sans-serif;
   font-weight: 500;
+  white-space: nowrap;
 
   display: flex;
   justify-content: space-evenly;

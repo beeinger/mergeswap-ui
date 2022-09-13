@@ -10,7 +10,7 @@ export default function ChainSwitcher() {
   const { account, activateBrowserWallet } = useEthers();
 
   return (
-    <StyledChainSwitcher>
+    <StyledChainSwitcher account={Boolean(account)}>
       <Option
         isActive={account && isPoW}
         title={isPoW ? "You're on PoW ETH" : "Switch to PoW ETH"}
