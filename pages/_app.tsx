@@ -1,4 +1,7 @@
+import "react-toastify/dist/ReactToastify.css";
+
 import { Config, DAppProvider, Mainnet } from "@usedapp/core";
+import { ToastContainer, toast } from "react-toastify";
 
 import Account from "components/Account";
 import { CacheProvider } from "@emotion/react";
@@ -19,6 +22,7 @@ const App = ({ Component, pageProps }) => (
   <CacheProvider value={cache}>
     <DAppProvider config={config}>
       {globalStyles}
+      <ToastContainer position="top-left" />
       <Account />
       <Component {...pageProps} />
     </DAppProvider>

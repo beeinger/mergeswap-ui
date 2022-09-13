@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import useChains, { ChainsContext } from "shared/useChains";
 
 import ChainSwitcher from "components/ChainSwitcher";
@@ -6,13 +5,15 @@ import Head from "next/head";
 import PathSwitcher from "components/PathSwitcher";
 import PoSToPoW from "components/PoSToPoW";
 import PoWToPoS from "components/PoWToPoS";
+import React from "react";
 import styled from "@emotion/styled";
 import { useEthers } from "@usedapp/core";
+import usePath from "shared/usePath";
 
 export default function Index() {
-  const { account } = useEthers();
   const chains = useChains();
-  const [path, setPath] = useState<"PoW->PoS" | "PoS->PoW">("PoW->PoS");
+  const { account } = useEthers();
+  const [path, setPath] = usePath();
 
   return (
     <>
@@ -71,7 +72,11 @@ const MainContainer = styled.div`
   display: flex;
   justify-content: center;
 
-  margin-top: 60px;
+  margin-top: calc(20% + 2rem);
+
+  @media (max-width: 685px) {
+    margin-top: calc(40% + 2rem);
+  }
 
   gap: 24px;
 `;
@@ -80,6 +85,18 @@ const Path = styled.div`
   display: flex;
   flex-direction: column;
 
+  position: relative;
+
   justify-content: center;
   text-align: center;
+
+  background: #191b1f;
+  border-radius: 16px;
+
+  padding: 48px;
+  min-width: 40%;
+  min-height: 200px;
+
+  box-shadow: rgb(0 0 0 / 1%) 0px 0px 1px, rgb(0 0 0 / 4%) 0px 4px 8px,
+    rgb(0 0 0 / 4%) 0px 16px 24px, rgb(0 0 0 / 1%) 0px 24px 32px;
 `;

@@ -1,32 +1,33 @@
-import { Option, StyledChainSwitcher } from "components/ChainSwitcher/styles";
+import { PathOption, StyledPathSwitcher } from "./styles";
 
+import { Path } from "shared/types";
 import React from "react";
-import styled from "@emotion/styled";
 
 export default function PathSwitcher({
   path,
   setPath,
 }: {
-  path: "PoW->PoS" | "PoS->PoW";
-  setPath: React.Dispatch<React.SetStateAction<"PoW->PoS" | "PoS->PoW">>;
+  path: Path;
+  setPath: React.Dispatch<React.SetStateAction<Path>>;
 }) {
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) =>
-    setPath(e.currentTarget.textContent as "PoW->PoS" | "PoS->PoW");
+    setPath(e.currentTarget.textContent as Path);
   return (
     <StyledPathSwitcher>
-      <PathOption isActive={"PoW->PoS" === path} onClick={handleClick}>
+      <PathOption
+        title="Switch to moving tokens from PoW to PoS"
+        isActive={"PoW->PoS" === path}
+        onClick={handleClick}
+      >
         {"PoW->PoS"}
       </PathOption>
-      <PathOption isActive={"PoS->PoW" === path} onClick={handleClick}>
+      <PathOption
+        title="Switch to moving tokens from PoS to PoW"
+        isActive={"PoS->PoW" === path}
+        onClick={handleClick}
+      >
         {"PoS->PoW"}
       </PathOption>
     </StyledPathSwitcher>
   );
 }
-
-const StyledPathSwitcher = styled(StyledChainSwitcher)`
-  position: relative;
-  width: fit-content;
-`;
-
-const PathOption = styled(Option)``;
