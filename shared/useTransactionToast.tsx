@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from "react";
+import { UpdateOptions, toast } from "react-toastify";
 
 import { TransactionStatus } from "@usedapp/core";
-import { toast } from "react-toastify";
 
 export default function useWrapTxInToasts(
   state: TransactionStatus,
@@ -62,7 +62,11 @@ export default function useWrapTxInToasts(
       ),
       config = {
         progress: progress / 3,
-      };
+        autoClose: false,
+        closeButton: false,
+        closeOnClick: false,
+        draggable: false,
+      } as UpdateOptions;
 
     if (!toastId.current) toastId.current = toast.dark(render, config);
     else toast.update(toastId.current, { ...config, render });
