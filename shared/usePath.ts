@@ -21,7 +21,7 @@ export default function usePath(disabled: boolean = false) {
         { shallow: true }
       );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [path, router.query.path]);
+  }, [path, router.query.path, disabled]);
 
   useEffect(() => {
     if (!disabled) return;
