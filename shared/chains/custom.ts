@@ -1,6 +1,11 @@
 import { Chain } from "@usedapp/core";
+import { providers } from "ethers";
 
-export const PoW: Chain = {
+export type ChainPlus = Chain & {
+  provider: providers.JsonRpcProvider;
+};
+
+export const PoW: ChainPlus = {
   chainId: 5,
   chainName: "Goerli Test Network",
   isTestChain: true,
@@ -18,9 +23,12 @@ export const PoW: Chain = {
     symbol: "ETH",
     decimals: 18,
   },
+  provider: new providers.JsonRpcProvider(
+    process.env.NEXT_PUBLIC_POW_HTTP_PROVIDER
+  ),
 };
 
-export const PoS: Chain = {
+export const PoS: ChainPlus = {
   chainId: 80001,
   chainName: "Mumbai",
   isTestChain: true,
@@ -38,4 +46,7 @@ export const PoS: Chain = {
     symbol: "MATIC",
     decimals: 18,
   },
+  provider: new providers.JsonRpcProvider(
+    process.env.NEXT_PUBLIC_POS_HTTP_PROVIDER
+  ),
 };

@@ -12,15 +12,11 @@ import { PoS, PoW } from "shared/chains/custom";
 import { providers } from "ethers";
 
 const cache = createCache({ key: "next" });
-const config: Config = {
+export const config: Config = {
   readOnlyChainId: Goerli.chainId,
   readOnlyUrls: {
-    [PoW.chainId]: new providers.JsonRpcProvider( // Goerli (PoW)
-      process.env.NEXT_PUBLIC_POW_HTTP_PROVIDER
-    ),
-    [PoS.chainId]: new providers.JsonRpcProvider( // Polygon Mumbai (PoS)
-      process.env.NEXT_PUBLIC_POS_HTTP_PROVIDER
-    ),
+    [PoW.chainId]: PoW.provider,
+    [PoS.chainId]: PoS.provider,
   },
 };
 
