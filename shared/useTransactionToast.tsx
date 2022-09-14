@@ -48,7 +48,8 @@ export default function useWrapTxInToasts(
           }
         );
 
-      return callback();
+      callback();
+      return;
     }
     // Handle transaction progress
     const render = (

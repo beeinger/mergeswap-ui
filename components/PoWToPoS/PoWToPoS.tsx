@@ -46,7 +46,7 @@ export default function PoWToPoS() {
         </MaxButton>
       </Balance>
       <ConfirmTransaction
-        disabled={!account || depositState.status !== "None" || isLoading}
+        disabled={depositState.status !== "None" || isLoading}
         onClick={handleDeposit}
       >
         deposit

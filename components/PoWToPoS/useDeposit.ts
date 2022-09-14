@@ -79,17 +79,20 @@ export default function useDeposit(
   useWrapTxInToasts(depositState, onDepositComplete);
 
   const handleDeposit = async () => {
+    if (!poWEthAmount) return;
     setIsLoading(true);
     const receipt = await sendDeposit(parseEther(poWEthAmount), account, {
       value: parseEther(poWEthAmount),
     });
-    const [depositId, , ,] = defaultAbiCoder.decode(
-      ["uint256", "uint256", "address", "address"],
-      receipt.logs[0].data
-    );
-    setPowDepositId(depositId.toNumber());
-    setPowDepositInclusionBlock(receipt.blockNumber);
-    setPoWEthAmount("");
+    if (receipt) {
+      const [depositId, , ,] = defaultAbiCoder.decode(
+        ["uint256", "uint256", "address", "address"],
+        receipt.logs[0].data
+      );
+      setPowDepositId(depositId.toNumber());
+      setPowDepositInclusionBlock(receipt.blockNumber);
+      setPoWEthAmount("");
+    }
     setIsLoading(false);
   };
 
