@@ -49,28 +49,28 @@ export default function useWrapTxInToasts(
         );
 
       callback();
-      return;
-    }
-    // Handle transaction progress
-    const render = (
-        <>
-          <span>Transaction in progress...</span>
-          <br />
-          <span style={{ opacity: 0.35, fontSize: "0.75 rem" }}>
-            {state.status}
-          </span>
-        </>
-      ),
-      config = {
-        progress: progress / 3,
-        autoClose: false,
-        closeButton: false,
-        closeOnClick: false,
-        draggable: false,
-      } as UpdateOptions;
+    } else {
+      // Handle transaction progress
+      const render = (
+          <>
+            <span>Transaction in progress...</span>
+            <br />
+            <span style={{ opacity: 0.35, fontSize: "0.75 rem" }}>
+              {state.status}
+            </span>
+          </>
+        ),
+        config = {
+          progress: progress / 3,
+          autoClose: false,
+          closeButton: false,
+          closeOnClick: false,
+          draggable: false,
+        } as UpdateOptions;
 
-    if (!toastId.current) toastId.current = toast.dark(render, config);
-    else toast.update(toastId.current, { ...config, render });
+      if (!toastId.current) toastId.current = toast.dark(render, config);
+      else toast.update(toastId.current, { ...config, render });
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [progress, state.status]);

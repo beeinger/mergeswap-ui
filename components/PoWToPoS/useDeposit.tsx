@@ -7,12 +7,13 @@ import {
   keccak256,
   parseEther,
 } from "ethers/lib/utils";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useMemo, useRef, useState } from "react";
 import { useContractFunction, useEtherBalance, useEthers } from "@usedapp/core";
 
 import { ChainsContext } from "shared/useChains";
 import { Contract } from "@ethersproject/contracts";
 import { encodeProof } from "shared/utils/encode-proof";
+import { toast } from "react-toastify";
 import useWrapTxInToasts from "shared/useTransactionToast";
 
 const depositPowInterface = new Interface([
@@ -25,9 +26,10 @@ export default function useDeposit(
   [poWEthAmount, setPoWEthAmount],
   setIsLoading
 ) {
-  const { provider } = useContext(ChainsContext);
+  const { provider, handleSwitchToPoS } = useContext(ChainsContext);
   const { account } = useEthers();
   const etherBalance = useEtherBalance(account);
+  const toastId = useRef(null);
 
   const [powDepositId, setPowDepositId] = useState<number>(undefined),
     [powDepositInclusionBlock, setPowDepositInclusionBlock] =
@@ -50,7 +52,24 @@ export default function useDeposit(
     onDepositComplete = async () => {
       const { transaction: tx, receipt, status } = depositState;
 
+      console.log("complete", status);
+
       if (status === "Success") {
+        toastId.current = toast.dark(
+          <>
+            Deposited ETH PoW successfully!
+            <br />
+            Awaiting {process.env.NEXT_PUBLIC_DEPOSIT_BLOCKS_CONFIRMATIONS}{" "}
+            blocks confirmations...
+          </>,
+          {
+            autoClose: false,
+            closeButton: false,
+            closeOnClick: false,
+            draggable: false,
+            isLoading: true,
+          }
+        );
         await tx.wait(
           Number(process.env.NEXT_PUBLIC_DEPOSIT_BLOCKS_CONFIRMATIONS)
         );
@@ -71,6 +90,22 @@ export default function useDeposit(
 
         setAccountProof(encodeProof(rpcAccountProof));
         setStorageProof(encodeProof(rpcStorageProof));
+
+        toast.update(toastId.current, {
+          render: (
+            <>
+              Ok, all done!
+              <br />
+              Now switch to PoS and mint!
+            </>
+          ),
+          isLoading: false,
+          autoClose: 60000,
+          closeButton: true,
+          closeOnClick: true,
+          draggable: true,
+        });
+        handleSwitchToPoS();
       }
       // cleanup
       resetDepositState();
