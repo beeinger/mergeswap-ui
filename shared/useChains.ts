@@ -6,16 +6,15 @@ import { useEthers } from "@usedapp/core";
 export const ChainsContext = createContext<ReturnType<typeof useChains>>(null);
 
 export default function useChains() {
-  const { activateBrowserWallet, chainId, switchNetwork, active, account } =
-    useEthers();
+  const { activateBrowserWallet, chainId, switchNetwork, active } = useEthers();
 
-  const handleSwitchToPoS = async () => {
+  const handleSwitchToPoS = () => {
+      if (!active) activateBrowserWallet();
       switchNetwork(PoS.chainId);
-      if (!active) activateBrowserWallet();
     },
-    handleSwitchToPoW = async () => {
-      switchNetwork(PoW.chainId);
+    handleSwitchToPoW = () => {
       if (!active) activateBrowserWallet();
+      switchNetwork(PoW.chainId);
     };
 
   return {
