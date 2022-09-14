@@ -1,19 +1,20 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 
+const media = css`
+  @media (max-width: 685px) {
+    top: 80px;
+  }
+`;
+
 export const StyledChainSwitcher = styled.div<{ account?: boolean }>`
   position: absolute;
   top: 16px;
   left: 50%;
   transform: translateX(-50%);
+  user-select: none;
 
-  ${({ account }) =>
-    account &&
-    css`
-      @media (max-width: 685px) {
-        top: 80px;
-      }
-    `}
+  ${({ account }) => account && media}
 
   font-family: "Inter", sans-serif;
   font-weight: 500;
@@ -25,7 +26,6 @@ export const StyledChainSwitcher = styled.div<{ account?: boolean }>`
 
   background: #191b1f;
   border-radius: 100000px;
-  /* border: 1px solid #2f3336; */
   padding: 4px;
 
   box-shadow: rgb(0 0 0 / 1%) 0px 0px 1px, rgb(0 0 0 / 4%) 0px 4px 8px,

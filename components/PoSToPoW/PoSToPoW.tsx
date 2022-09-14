@@ -9,7 +9,6 @@ export default function PoSToPoW() {
   return isPoS ? (
     //? Should be active only when person has our tokens that represent ETH PoW on PoS
     <div>
-      <h4>Exchange ETH PoW tokens on PoS back to ETH PoW</h4>
       <input
         placeholder="ETH PoW tokens amount"
         onChange={(e) => setPoWEthTokensAmount(e.target.value)}
@@ -20,7 +19,6 @@ export default function PoSToPoW() {
   ) : (
     //? Should be active only when someone has burned our ETH PoW tokens on PoS
     <div>
-      <h4>Redeem ETH PoW you&apos;ve sent back from PoS</h4>
       <input
         placeholder="ETH PoW amount"
         onChange={(e) => setPoWEthTokensAmount(e.target.value)}
