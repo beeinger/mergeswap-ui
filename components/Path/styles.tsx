@@ -8,7 +8,7 @@ export const StyledPath = styled(({ isInfo, ...rest }) => (
   position: relative;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 1fr ${({ isInfo }) => (isInfo ? "0px" : "1.3fr")};
+  grid-template-rows: 1fr ${({ isInfo }) => (isInfo ? "0px" : "100px")};
   ${({ isInfo }) => !isInfo && "grid-gap: 8px;"}
 
   position: relative;

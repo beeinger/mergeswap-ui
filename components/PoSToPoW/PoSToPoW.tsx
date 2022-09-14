@@ -1,3 +1,10 @@
+import {
+  Balance,
+  ConfirmTransaction,
+  EthInput,
+  InteractionContainer,
+  MaxButton,
+} from "components/Path/styles";
 import React, { useContext, useState } from "react";
 
 import { ChainsContext } from "shared/useChains";
@@ -8,23 +15,31 @@ export default function PoSToPoW() {
 
   return isPoS ? (
     //? Should be active only when person has our tokens that represent ETH PoW on PoS
-    <div>
-      <input
-        placeholder="ETH PoW tokens amount"
+    <InteractionContainer>
+      <EthInput
+        placeholder="0.0"
         onChange={(e) => setPoWEthTokensAmount(e.target.value)}
-        value={poWEthTokensAmount}
+        value={poWEthTokensAmount.slice(0, 9)}
       />
-      <button>withdraw</button>
-    </div>
+      <Balance>
+        Balance: {"todo"}
+        <MaxButton>max</MaxButton>
+      </Balance>
+      <ConfirmTransaction>withdraw</ConfirmTransaction>
+    </InteractionContainer>
   ) : (
     //? Should be active only when someone has burned our ETH PoW tokens on PoS
-    <div>
-      <input
-        placeholder="ETH PoW amount"
+    <InteractionContainer>
+      <EthInput
+        placeholder="0.0"
         onChange={(e) => setPoWEthTokensAmount(e.target.value)}
-        value={poWEthTokensAmount}
+        value={poWEthTokensAmount.slice(0, 9)}
       />
-      <button>redeem</button>
-    </div>
+      <Balance>
+        Balance: {"todo"}
+        <MaxButton>max</MaxButton>
+      </Balance>
+      <ConfirmTransaction>redeem</ConfirmTransaction>
+    </InteractionContainer>
   );
 }
