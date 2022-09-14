@@ -247,7 +247,14 @@ export default function PoWToPoS() {
   ) : (
     //? Should be active only when someone has sent ETH PoW to PoS
     <InteractionContainer>
-      <EthInput placeholder="0.0" />
+      <EthInput
+        placeholder="0.0"
+        onChange={(e) =>
+          /^[0-9]*\.?[0-9]*$/.test(e.target.value) &&
+          setPoWEthAmount(e.target.value)
+        }
+        value={poWEthAmount.slice(0, 9)}
+      />
       <Balance>
         Balance: {"todo"}
         <MaxButton>max</MaxButton>
