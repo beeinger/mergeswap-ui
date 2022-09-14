@@ -37,7 +37,7 @@ export default function PoWToPoS() {
   return isPoW ? (
     //? Always active (or when someone has any ETH on PoW)
     <div>
-      <h4>Send PoW ETH to PoS</h4>
+      <h4>Send ETH PoW to PoS</h4>
       <input
         placeholder="ETH amount"
         onChange={(e) => setPoWEthAmount(e.target.value)}
@@ -51,11 +51,11 @@ export default function PoWToPoS() {
       </button>
     </div>
   ) : (
-    //? Should be active only when someone has sent PoW ETH to PoS
+    //? Should be active only when someone has sent ETH PoW to PoS
     <div>
-      <h4>Mint PoW ETH you&apos;ve sent to PoS</h4>
+      <h4>Mint ETH PoW you&apos;ve sent to PoS</h4>
       <input
-        placeholder="PoW ETH amount"
+        placeholder="ETH PoW amount"
         onChange={(e) => setPoWEthAmount(e.target.value)}
         value={poWEthAmount}
       />
