@@ -1,7 +1,6 @@
 import { PoS, PoW } from "./chains/custom";
+import { createContext, useMemo } from "react";
 
-import { createContext } from "react";
-import { providers } from "ethers";
 import { useEthers } from "@usedapp/core";
 
 export const ChainsContext = createContext<ReturnType<typeof useChains>>(null);
@@ -19,9 +18,15 @@ export default function useChains() {
       switchNetwork(PoW.chainId);
     };
 
-  let provider: undefined | providers.JsonRpcProvider;
-  if (chainId === PoS.chainId) provider = PoS.provider;
-  else if (chainId === PoW.chainId) provider = PoW.provider;
+  const provider = useMemo(
+    () =>
+      chainId === PoS.chainId
+        ? PoS.provider
+        : chainId === PoW.chainId
+        ? PoW.provider
+        : undefined,
+    [chainId]
+  );
 
   return {
     handleSwitchToPoS,

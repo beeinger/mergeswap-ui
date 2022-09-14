@@ -39,7 +39,7 @@ export const PoS: ChainPlus = {
   getExplorerTransactionLink: (transactionHash: string) =>
     `https://mumbai.polygonscan.com/tx/${transactionHash}`,
   // Optional parameters:
-  rpcUrl: 'https://matic-mumbai.chainstacklabs.com"',
+  rpcUrl: "https://matic-mumbai.chainstacklabs.com",
   blockExplorerUrl: "https://mumbai.polygonscan.com",
   nativeCurrency: {
     name: "MATIC",

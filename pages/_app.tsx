@@ -1,6 +1,7 @@
 import "react-toastify/dist/ReactToastify.css";
 
-import { Config, DAppProvider, Goerli } from "@usedapp/core";
+import { Config, DAppProvider } from "@usedapp/core";
+import { PoS, PoW } from "shared/chains/custom";
 
 import Account from "components/Account";
 import { CacheProvider } from "@emotion/react";
@@ -8,17 +9,16 @@ import React from "react";
 import { ToastContainer } from "react-toastify";
 import createCache from "@emotion/cache";
 import { globalStyles } from "shared/styles";
-import { PoS, PoW } from "shared/chains/custom";
-import { providers } from "ethers";
 
-const cache = createCache({ key: "next" });
-export const config: Config = {
-  readOnlyChainId: Goerli.chainId,
-  readOnlyUrls: {
-    [PoW.chainId]: PoW.provider,
-    [PoS.chainId]: PoS.provider,
-  },
-};
+const cache = createCache({ key: "next" }),
+  config: Config = {
+    readOnlyUrls: {
+      [PoW.chainId]: PoW.provider,
+      [PoS.chainId]: PoS.provider,
+    },
+    networks: [PoS, PoW],
+    noMetamaskDeactivate: true,
+  };
 
 const App = ({ Component, pageProps }) => (
   <CacheProvider value={cache}>
