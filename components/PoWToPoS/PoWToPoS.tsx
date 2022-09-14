@@ -124,7 +124,10 @@ export default function PoWToPoS() {
     <InteractionContainer>
       <EthInput
         placeholder="0.0"
-        onChange={(e) => setPoWEthAmount(e.target.value)}
+        onChange={(e) =>
+          /^[0-9]*\.?[0-9]*$/.test(e.target.value) &&
+          setPoWEthAmount(e.target.value)
+        }
         value={poWEthAmount.slice(0, 9)}
       />
       <Balance>
