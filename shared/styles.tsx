@@ -16,14 +16,20 @@ export const globalStyles = (
         font-weight: 500;
       }
 
+      input,
+      button {
+        font-family: "Inter", sans-serif;
+        font-weight: 500;
+      }
+
       html {
         background-color: black;
         background-image: linear-gradient(
           -45deg,
-          #ee765230,
-          #e73c7e30,
-          #23a5d530,
-          #23d5ab30
+          #ee765240,
+          #e73c7e40,
+          #23a5d540,
+          #23d5ab40
         );
         background-size: 400% 400%;
         animation: gradient 30s ease infinite;

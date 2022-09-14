@@ -13,7 +13,11 @@ export default function NoPathChosenYet({
 
   return (
     <StyledNoPathChosenYet>
-      <h2>Choose the path you wish to follow</h2>
+      <h2>
+        Choose the path
+        <br />
+        you wish to follow
+      </h2>
       <ColumnContainer>
         <div>
           <h3 onClick={handleClick}>{"PoW->PoS"}</h3>

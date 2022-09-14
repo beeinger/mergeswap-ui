@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
 import {
-  useCalls,
   useContractFunction,
   useEtherBalance,
   useEthers,
@@ -11,12 +10,19 @@ import { ChainsContext } from "shared/useChains";
 import { Contract } from "@ethersproject/contracts";
 import useWrapTxInToasts from "shared/useTransactionToast";
 import {
+  Balance,
+  ConfirmTransaction,
+  EthInput,
+  InteractionContainer,
+  MaxButton,
+} from "components/Path/styles";
+import {
+  Interface,
   formatEther,
+  formatUnits,
   hexZeroPad,
   keccak256,
   parseEther,
-  formatUnits,
-  Interface,
 } from "ethers/lib/utils";
 import {
   TransactionReceipt,
@@ -213,38 +219,37 @@ export default function PoWToPoS() {
 
   return isPoW ? (
     //? Always active (or when someone has any ETH on PoW)
-    <div>
-      <h4>Deposit ETH (PoW)</h4>
-      <div>
-        <input
-          placeholder="ETH amount"
-          onChange={(e) => setPoWEthAmount(e.target.value)}
-          value={poWEthAmount}
-        />
-        <button
-          disabled={etherBalance === undefined || isLoading}
+    <InteractionContainer>
+      <EthInput
+        placeholder="0.0"
+        onChange={(e) => setPoWEthAmount(e.target.value)}
+        value={poWEthAmount.slice(0, 9)}
+      />
+      <Balance>
+        Balance: {formatEther(etherBalance || "0").slice(0, 7)}
+        <MaxButton
           onClick={setMax}
+          disabled={etherBalance === undefined || isLoading}
         >
           max
-        </button>
-      </div>
-      <button
+        </MaxButton>
+      </Balance>
+      <ConfirmTransaction
         disabled={!account || state.status !== "None" || isLoading}
         onClick={handleDeposit}
       >
-        confirm
-      </button>
-    </div>
+        deposit
+      </ConfirmTransaction>
+    </InteractionContainer>
   ) : (
     //? Should be active only when someone has sent ETH PoW to PoS
-    <div>
-      <h4>Mint ETH PoW you&apos;ve sent to PoS</h4>
-      {/* <input
-        placeholder="ETH PoW amount"
-        onChange={(e) => setPoWEthAmount(e.target.value)}
-        value={poWEthAmount}
-      /> */}
-      <button onClick={handleMint}>mint</button>
-    </div>
+    <InteractionContainer>
+      <EthInput placeholder="0.0" />
+      <Balance>
+        Balance: {"todo"}
+        <MaxButton>max</MaxButton>
+      </Balance>
+      <ConfirmTransaction onClick={handleMint}>mint</ConfirmTransaction>
+    </InteractionContainer>
   );
 }

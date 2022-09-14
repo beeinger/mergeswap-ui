@@ -10,7 +10,7 @@ export const PoW: ChainPlus = {
   chainName: "Goerli Test Network",
   isTestChain: true,
   isLocalChain: false,
-  multicallAddress: "0x0000000000000000000000000000000000000000",
+  multicallAddress: "0x77dca2c955b15e9de4dbbcf1246b4b85b651e50e",
   getExplorerAddressLink: (address: string) =>
     `https://goerli.etherscan.io/address/${address}`,
   getExplorerTransactionLink: (transactionHash: string) =>
@@ -33,7 +33,7 @@ export const PoS: ChainPlus = {
   chainName: "Mumbai",
   isTestChain: true,
   isLocalChain: false,
-  multicallAddress: "0x0000000000000000000000000000000000000000",
+  multicallAddress: "0x08411ADd0b5AA8ee47563b146743C13b3556c9Cc",
   getExplorerAddressLink: (address: string) =>
     `https://mumbai.polygonscan.com/address/${address}`,
   getExplorerTransactionLink: (transactionHash: string) =>

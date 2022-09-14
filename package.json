@@ -10,6 +10,7 @@
     "@emotion/styled": "^11.10.4",
     "@usedapp/core": "^1.1.5",
     "ethers": "^5.7.0",
+    "framer-motion": "^7.3.4",
     "next": "^12.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
