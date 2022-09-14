@@ -1,5 +1,5 @@
-import { InteractionContainer, StyledPath, Title } from "./styles";
 import React, { useContext, useMemo } from "react";
+import { StyledPath, Title } from "./styles";
 
 import { ChainsContext } from "shared/useChains";
 import NoPathChosenYet from "components/NoPathChosenYet";
@@ -17,10 +17,17 @@ export default function Path() {
   const title = useMemo(() => {
     if (path === "PoW->PoS") {
       if (isPoW) return "Deposit ETH PoW";
-      else return "Mint ETH PoW you&apos;ve sent to PoS";
+      else return "Mint ETH PoW on PoS";
     } else {
-      if (isPoS) return "Exchange ETH PoW tokens on PoS back to ETH PoW";
-      else return "Redeem ETH PoW you&apos;ve sent back from PoS";
+      if (isPoS)
+        return (
+          <>
+            Withdraw ETH PoW on PoS
+            <br />
+            back to PoW
+          </>
+        );
+      else return "Redeem ETH PoW you've withdrawn from PoS";
     }
   }, [isPoS, isPoW, path]);
 
