@@ -8,10 +8,6 @@ import { toast } from "react-toastify";
 export default function Account() {
   const { account, deactivate } = useEthers();
 
-  const handleDisconnect = () => {
-    if (typeof window !== "undefined") deactivate();
-  };
-
   return (
     account && (
       <AccountStyled>
@@ -25,7 +21,7 @@ export default function Account() {
         >
           {shortenAddress(account)}
         </AccountAddress>
-        <AccountDisconnect title="Disconnect wallet" onClick={handleDisconnect}>
+        <AccountDisconnect title="Disconnect wallet" onClick={deactivate}>
           <AiOutlineDisconnect />
         </AccountDisconnect>
       </AccountStyled>
