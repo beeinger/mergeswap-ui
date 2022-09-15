@@ -1,11 +1,11 @@
-import { hexValue, hexZeroPad, Interface, keccak256 } from "ethers/lib/utils";
-import { useMemo } from "react";
+import { Interface, hexValue, hexZeroPad, keccak256 } from "ethers/lib/utils";
+import { PoS, PoW } from "shared/chains/custom";
 import { useContractFunction, useEthers } from "@usedapp/core";
 
 import { Contract } from "@ethersproject/contracts";
-import useWrapTxInToasts from "shared/useTransactionToast";
-import { PoS, PoW } from "shared/chains/custom";
 import { encodeProof } from "shared/utils/encode-proof";
+import { useMemo } from "react";
+import useWrapTxInToasts from "shared/useTransactionToast";
 
 const wPowEthInterface = new Interface([
     "function mint(uint256 depositId, address recipient, uint256 amount, uint256 depositBlockNumber, bytes memory storageProof)",
@@ -16,8 +16,6 @@ const wPowEthInterface = new Interface([
   wPowEthAddress = process.env.NEXT_PUBLIC_WPOWETH_POS_ADDRESS;
 
 export default function useMint() {
-  // poWEthAmount,
-  // { powDepositId, powDepositInclusionBlock, accountProof, storageProof }
   const { account } = useEthers();
 
   const wPowEthContract = useMemo(

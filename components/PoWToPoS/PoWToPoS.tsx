@@ -21,9 +21,11 @@ export default function PoWToPoS() {
     { account } = useEthers(),
     etherBalance = useEtherBalance(account);
 
-  const { depositState, handleDeposit, setMax, ...packageForUseMint } =
-      useDeposit([poWEthAmount, setPoWEthAmount], setIsLoading),
-    { handleMint } = useMint(/*poWEthAmount, packageForUseMint*/);
+  const { depositState, handleDeposit, setMax } = useDeposit(
+      [poWEthAmount, setPoWEthAmount],
+      setIsLoading
+    ),
+    { handleMint } = useMint();
 
   return isPoW ? (
     //? Always active (or when someone has any ETH on PoW)
@@ -57,16 +59,11 @@ export default function PoWToPoS() {
     <InteractionContainer>
       <EthInput
         placeholder="0.0"
-        onChange={(e) =>
-          /^[0-9]*\.?[0-9]*$/.test(e.target.value) &&
-          setPoWEthAmount(e.target.value)
-        }
-        value={poWEthAmount.slice(0, 9)}
+        disabled
+        //TODO display amount here
+        value={"all"}
       />
-      <Balance>
-        Balance: {"todo"}
-        <MaxButton>max</MaxButton>
-      </Balance>
+      <Balance>mint tokens deposited on PoW</Balance>
       <ConfirmTransaction onClick={handleMint}>mint</ConfirmTransaction>
     </InteractionContainer>
   );
