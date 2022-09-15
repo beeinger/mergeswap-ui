@@ -1,0 +1,14 @@
+{
+  "name": "MergeSwap - PoW <-> PoS bridge",
+  "short_name": "MergeSwap",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#324761",
+  "background_color": "#371221",
+  "display": "standalone"
+}
