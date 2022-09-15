@@ -18,8 +18,7 @@ const wPowEthInterface = new Interface([
 export default function useMint({
   powDepositId,
   powDepositInclusionBlock,
-  accountProof,
-  storageProof,
+  powDepositAmount,
 }) {
   const { account } = useEthers();
 
@@ -73,80 +72,50 @@ export default function useMint({
     };
   };
 
-  const fetchUserDeposits = async (/* userAddress: string */) => {
-    // TODO: replace with The Graph's subgraph call.
-    const userDeposits = [
-      {
-        // blockNumber: "7597085",
-        blockNumber: "7597413",
-        id: parseInt("0x0", 16),
-        proof: await getProof("0x0", "7597413"),
-        amount: "30000000000000000",
-        depositor: "0x6b477781b0e68031109f21887e6b5afeaaeb002b",
-        recipient: "0x6b477781b0e68031109f21887e6b5afeaaeb002b",
-      },
-    ];
-    return userDeposits;
-  };
-
   const handleMint = async () => {
-    console.log("handleMint");
-    // TODO: properly handle confirmations.
+    const inclusionBlockStateRoot = await retrieveStateRoot(
+      Number(powDepositId)
+    );
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_ORACLE_API_URL}/?chainHandle=eth-pow-mainnet&blockNumber=${powDepositInclusionBlock}`
+    );
+    const res = await response.json();
+    const { envelope } = res;
 
-    const userDeposits = await fetchUserDeposits(/*account*/);
-    for (const userDeposit of userDeposits) {
-      console.log("preparing minting params...");
+    const proof = await getProof("0x3", powDepositInclusionBlock);
 
-      const inclusionBlockStateRoot = await retrieveStateRoot(
-        Number(userDeposit.blockNumber)
-      );
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_ORACLE_API_URL}/?chainHandle=eth-pow-mainnet&blockNumber=${userDeposit.blockNumber}`
-      );
-      const res = await response.json();
-      console.log("-->", res);
-      const { envelope } = res;
+    console.log("powDepositId", powDepositId);
+    console.log("powDepositInclusionBlock", powDepositInclusionBlock);
 
-      console.log("powDepositId", userDeposit.id);
-      console.log("powDepositInclusionBlock", userDeposit.blockNumber);
-      console.log("powEthAmount", userDeposit.amount);
-      console.log("storageProof", userDeposit.proof.storageProof);
-      console.log("accountProof", userDeposit.proof.accountProof);
+    console.log("inclusionBlockStateRoot", inclusionBlockStateRoot);
+    console.log("account", account);
 
-      console.log("inclusionBlockStateRoot", inclusionBlockStateRoot);
-      console.log("account", account);
-      console.log("envelope signature", envelope.signature);
+    // TODO: check if already minted.
+    // console.log("contract addr", wPowEthContract.address);
+    // console.log("provider", wPowEthContract);
 
-      // TODO: check if already minted.
-      // console.log("contract addr", wPowEthContract.address);
-      // console.log("provider", wPowEthContract);
-      console.log(
-        "encoded account proof",
-        encodeProof(userDeposit.proof.accountProof)
-      );
-      const multicallArgs = [
-        wPowEthContract.interface.encodeFunctionData("relayStateRoot", [
-          userDeposit.blockNumber,
-          inclusionBlockStateRoot,
-          envelope.signature,
-        ]),
-        // TODO: check if that this call is required.
-        wPowEthContract.interface.encodeFunctionData(
-          "updateDepositContractStorageRoot",
-          [userDeposit.blockNumber, encodeProof(userDeposit.proof.accountProof)]
-        ),
-        wPowEthContract.interface.encodeFunctionData("mint", [
-          userDeposit.id,
-          userDeposit.recipient,
-          userDeposit.amount,
-          userDeposit.blockNumber,
-          encodeProof(userDeposit.proof.storageProof),
-        ]),
-      ];
+    const multicallArgs = [
+      wPowEthContract.interface.encodeFunctionData("relayStateRoot", [
+        powDepositInclusionBlock,
+        inclusionBlockStateRoot,
+        envelope.signature,
+      ]),
+      // TODO: check if that this call is required.
+      wPowEthContract.interface.encodeFunctionData(
+        "updateDepositContractStorageRoot",
+        [inclusionBlockStateRoot, encodeProof(proof.accountProof)]
+      ),
+      wPowEthContract.interface.encodeFunctionData("mint", [
+        powDepositId,
+        account,
+        powDepositAmount,
+        powDepositInclusionBlock,
+        encodeProof(proof.storageProof),
+      ]),
+    ];
 
-      const tx = await sendMintTx(multicallArgs);
-      console.log(tx);
-    }
+    const tx = await sendMintTx(multicallArgs);
+    console.log(tx);
   };
 
   return { handleMint };

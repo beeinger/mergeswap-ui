@@ -149,6 +149,7 @@ export default function useDeposit(
     setMax,
     //? Package for useMint:
     powDepositId,
+    powDepositAmount: poWEthAmount,
     powDepositInclusionBlock,
     accountProof,
     storageProof,
