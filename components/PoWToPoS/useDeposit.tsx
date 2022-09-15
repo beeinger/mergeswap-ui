@@ -75,22 +75,22 @@ export default function useDeposit(
           Number(process.env.NEXT_PUBLIC_DEPOSIT_BLOCKS_CONFIRMATIONS)
         );
 
-        const { args } = depositPowContract.interface.parseLog(receipt.logs[0]);
+        // const { args } = depositPowContract.interface.parseLog(receipt.logs[0]);
 
-        const paddedSlot = hexZeroPad("0x" + powDepositId.toString(16), 32),
-          paddedKey = hexZeroPad(args[0].toHexString(), 32),
-          itemSlot = keccak256(paddedKey + paddedSlot.slice(2));
+        // const paddedSlot = hexZeroPad("0x" + powDepositId.toString(16), 32),
+        //   paddedKey = hexZeroPad(args[0].toHexString(), 32),
+        //   itemSlot = keccak256(paddedKey + paddedSlot.slice(2));
 
-        const proof = await provider.send("eth_getProof", [
-            process.env.NEXT_PUBLIC_DEPOSIT_POW_ADDRESS,
-            [itemSlot],
-            "0x" + powDepositInclusionBlock.toString(16),
-          ]),
-          rpcAccountProof = proof.accountProof,
-          rpcStorageProof = proof.storageProof[0].proof;
+        // const proof = await provider.send("eth_getProof", [
+        //     process.env.NEXT_PUBLIC_DEPOSIT_POW_ADDRESS,
+        //     [itemSlot],
+        //     "0x" + powDepositInclusionBlock.toString(16),
+        //   ]),
+        //   rpcAccountProof = proof.accountProof,
+        //   rpcStorageProof = proof.storageProof[0].proof;
 
-        setAccountProof(encodeProof(rpcAccountProof));
-        setStorageProof(encodeProof(rpcStorageProof));
+        // setAccountProof(encodeProof(rpcAccountProof));
+        // setStorageProof(encodeProof(rpcStorageProof));
 
         toast.update(toastId.current, {
           render: (
@@ -142,7 +142,7 @@ export default function useDeposit(
         value: amount,
       }
     );
-    const gasPrice = await provider.getGasPrice();
+    const gasPrice = await PoW.provider.getGasPrice();
     //? We multiply by 4 to absorb gasPrice volatility + future withdraw call.
     const costInWei = formatUnits(gasUnitsEstimate.mul(gasPrice).mul(4), "wei");
     const maxAmount = amount.sub(costInWei);
