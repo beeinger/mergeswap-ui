@@ -21,9 +21,11 @@ export default function PoWToPoS() {
     { account } = useEthers(),
     etherBalance = useEtherBalance(account);
 
-  const { depositState, handleDeposit, setMax, ...packageForUseMint } =
-      useDeposit([poWEthAmount, setPoWEthAmount], setIsLoading),
-    { handleMint } = useMint(packageForUseMint);
+  const { depositState, handleDeposit, setMax } = useDeposit(
+      [poWEthAmount, setPoWEthAmount],
+      setIsLoading
+    ),
+    { handleMint } = useMint();
 
   return isPoW ? (
     //? Always active (or when someone has any ETH on PoW)

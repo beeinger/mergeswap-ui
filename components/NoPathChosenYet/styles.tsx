@@ -39,14 +39,14 @@ export const ColumnContainer = styled.div`
     cursor: pointer;
 
     > :not(h3) {
-      color: #ffffff70;
+      color: rgba(255, 255, 255, 0.7);
     }
     > h3 {
       color: rgba(255, 255, 255, 0.8);
     }
 
     :hover > * {
-      color: #ffffff;
+      color: rgba(255, 255, 255, 1);
     }
 
     padding: 8px;

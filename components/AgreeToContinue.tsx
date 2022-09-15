@@ -6,7 +6,9 @@ const agreeToContinue = (closeToast, onClose) => (
   <AgreeToContinue>
     This app is using contracts that haven&apos;t been audited,
     <br />
-    continuing you agree to do so at your own risk.
+    continuing you agree to do so at your own risk,
+    <br />
+    all deposited capital might be lost.
     <br />
     <div>
       <Button

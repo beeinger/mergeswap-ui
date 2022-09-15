@@ -1,4 +1,10 @@
-import { Interface, hexValue, hexZeroPad, keccak256 } from "ethers/lib/utils";
+import {
+  Interface,
+  hexValue,
+  hexZeroPad,
+  keccak256,
+  parseEther,
+} from "ethers/lib/utils";
 import { PoS, PoW } from "shared/chains/custom";
 import { useContractFunction, useEthers } from "@usedapp/core";
 
@@ -15,11 +21,22 @@ const wPowEthInterface = new Interface([
   ]),
   wPowEthAddress = process.env.NEXT_PUBLIC_WPOWETH_POS_ADDRESS;
 
-export default function useMint({
-  powDepositId,
-  powDepositInclusionBlock,
-  powDepositAmount,
-}) {
+const getProof = async (mapKey: string, blockNumber: string) => {
+  const paddedSlot = hexZeroPad("0x3", 32);
+  const paddedKey = hexZeroPad(mapKey, 32);
+  const itemSlot = keccak256(paddedKey + paddedSlot.slice(2));
+  const proof = await PoW.provider.send("eth_getProof", [
+    process.env.NEXT_PUBLIC_DEPOSIT_POW_ADDRESS,
+    [itemSlot],
+    hexValue(Number(blockNumber)),
+  ]);
+  return {
+    storageProof: proof.storageProof[0].proof,
+    accountProof: proof.accountProof,
+  };
+};
+
+export default function useMint() {
   const { account } = useEthers();
 
   const wPowEthContract = useMemo(
@@ -38,7 +55,8 @@ export default function useMint({
     onMintComplete = async () => {
       const { transaction: tx, receipt, status } = mintTxState;
 
-      console.log("do something when tx is done");
+      if (status === "Success") {
+      }
 
       // cleanup
       resetMintTxState();
@@ -57,24 +75,17 @@ export default function useMint({
     return stateRoot;
   };
 
-  const getProof = async (hexKey: string, blockNumber: string) => {
-    const paddedSlot = hexZeroPad("0x3", 32);
-    const paddedKey = hexZeroPad(hexKey, 32);
-    const itemSlot = keccak256(paddedKey + paddedSlot.slice(2));
-    const proof = await PoW.provider.send("eth_getProof", [
-      process.env.NEXT_PUBLIC_DEPOSIT_POW_ADDRESS,
-      [itemSlot],
-      hexValue(Number(blockNumber)),
-    ]);
-    return {
-      storageProof: proof.storageProof[0].proof,
-      accountProof: proof.accountProof,
-    };
-  };
-
   const handleMint = async () => {
+    const powDepositId = window.localStorage.getItem("powDepositId"),
+      powDepositInclusionBlock = window.localStorage.getItem(
+        "powDepositInclusionBlock"
+      ),
+      powDepositAmount = window.localStorage.getItem("powDepositAmount");
+
+    if (!powDepositId || !powDepositInclusionBlock || !powDepositAmount) return;
+
     const inclusionBlockStateRoot = await retrieveStateRoot(
-      Number(powDepositId)
+      Number(powDepositInclusionBlock)
     );
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_ORACLE_API_URL}/?chainHandle=eth-pow-mainnet&blockNumber=${powDepositInclusionBlock}`
@@ -82,17 +93,10 @@ export default function useMint({
     const res = await response.json();
     const { envelope } = res;
 
-    const proof = await getProof("0x3", powDepositInclusionBlock);
-
-    console.log("powDepositId", powDepositId);
-    console.log("powDepositInclusionBlock", powDepositInclusionBlock);
-
-    console.log("inclusionBlockStateRoot", inclusionBlockStateRoot);
-    console.log("account", account);
-
-    // TODO: check if already minted.
-    // console.log("contract addr", wPowEthContract.address);
-    // console.log("provider", wPowEthContract);
+    const proof = await getProof(
+      "0x" + parseInt(powDepositId).toString(16),
+      powDepositInclusionBlock
+    );
 
     const multicallArgs = [
       wPowEthContract.interface.encodeFunctionData("relayStateRoot", [
@@ -103,19 +107,31 @@ export default function useMint({
       // TODO: check if that this call is required.
       wPowEthContract.interface.encodeFunctionData(
         "updateDepositContractStorageRoot",
-        [inclusionBlockStateRoot, encodeProof(proof.accountProof)]
+        [powDepositInclusionBlock, encodeProof(proof.accountProof)]
       ),
       wPowEthContract.interface.encodeFunctionData("mint", [
         powDepositId,
         account,
-        powDepositAmount,
+        parseEther(powDepositAmount),
         powDepositInclusionBlock,
         encodeProof(proof.storageProof),
       ]),
     ];
 
-    const tx = await sendMintTx(multicallArgs);
-    console.log(tx);
+    await sendMintTx(multicallArgs);
+
+    await window.ethereum.request({
+      method: "wallet_watchAsset",
+      params: {
+        type: "ERC20",
+        options: {
+          address: process.env.NEXT_PUBLIC_WPOWETH_POS_ADDRESS,
+          symbol: "WPoWETH",
+          decimals: 18,
+          image: "https://dev.mergeswap.xyz/logo.svg",
+        },
+      },
+    });
   };
 
   return { handleMint };
