@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 const WPoWETHExplanation = "wrapped ERC-20 token representing PoW ETH on PoS";
 
 export default function NoPathChosenYet() {
-  const { handleSwitchToPoS, handleSwitchToPoW, isPoS, isPoW } =
+  const { handleSwitchToPoS, handleSwitchToPoW, isPoS, isPoW, connect } =
     useContext(ChainsContext);
   const { setPath, disabled } = useContext(PathContext);
   const [pathSelectionInProgress, setPathSelectionInProgress] =
@@ -23,6 +23,7 @@ export default function NoPathChosenYet() {
       (path === "PoW->PoS" && !isPoW) ||
       (path === "PoS->PoW" && !isPoS)
     ) {
+      return connect();
       setPathSelectionInProgress(path);
       if (path === "PoW->PoS") {
         toastId.current = toast.dark(

@@ -24,6 +24,24 @@ export default function useChains() {
       activateBrowserWallet();
     },
     connect = () => {
+      toast.dark(
+        <>
+          Not yet launched, follow{" "}
+          <a
+            target="blank"
+            href="https://twitter.com/0xmarcello?s=20&t=nQOfdihi6X2A062PFVDiSQ"
+            style={{ color: "aqua" }}
+          >
+            @0xmarcello
+          </a>{" "}
+          on Twitter for updates.
+        </>,
+        {
+          type: "warning",
+        }
+      );
+      return;
+
       const isAccepted =
         window.localStorage.getItem(
           "mergeswap_unaudited_contracts_risk_accepted"
