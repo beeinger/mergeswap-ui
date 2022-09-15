@@ -15,6 +15,7 @@ import { Contract } from "@ethersproject/contracts";
 import { encodeProof } from "shared/utils/encode-proof";
 import { toast } from "react-toastify";
 import useWrapTxInToasts from "shared/useTransactionToast";
+import { PoW } from "shared/chains/custom";
 
 const depositPowInterface = new Interface([
     "function deposit(uint256 amount, address recipient) payable",
@@ -26,7 +27,7 @@ export default function useDeposit(
   [poWEthAmount, setPoWEthAmount],
   setIsLoading
 ) {
-  const { provider, handleSwitchToPoS } = useContext(ChainsContext);
+  const { handleSwitchToPoS } = useContext(ChainsContext);
   const { account } = useEthers();
   const etherBalance = useEtherBalance(account);
   const toastId = useRef(null);
@@ -38,8 +39,8 @@ export default function useDeposit(
     [storageProof, setStorageProof] = useState<string>("");
 
   const depositPowContract = useMemo(
-    () => new Contract(depositPowAddress, depositPowInterface, provider),
-    [provider]
+    () => new Contract(depositPowAddress, depositPowInterface, PoW.provider),
+    []
   );
 
   const {
