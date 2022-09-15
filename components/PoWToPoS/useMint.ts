@@ -56,25 +56,14 @@ export default function useMint() {
   };
 
   const getProof = async (hexKey: string, blockNumber: string) => {
-    const paddedSlot = hexZeroPad("0x6", 32);
+    const paddedSlot = hexZeroPad("0x3", 32);
     const paddedKey = hexZeroPad(hexKey, 32);
     const itemSlot = keccak256(paddedKey + paddedSlot.slice(2));
-    // const storageAt = await PoW.provider.getStorageAt(
-    //   process.env.NEXT_PUBLIC_DEPOSIT_POW_ADDRESS,
-    //   itemSlot
-    // );
-    console.log("getproof block nb", hexValue(Number(blockNumber)));
-    console.log("pow provider", PoW.provider);
-    console.log(
-      "pow contract addr",
-      process.env.NEXT_PUBLIC_DEPOSIT_POW_ADDRESS
-    );
     const proof = await PoW.provider.send("eth_getProof", [
       process.env.NEXT_PUBLIC_DEPOSIT_POW_ADDRESS,
       [itemSlot],
       hexValue(Number(blockNumber)),
     ]);
-    console.log("proof", proof);
     return {
       storageProof: proof.storageProof[0].proof,
       accountProof: proof.accountProof,
@@ -85,10 +74,11 @@ export default function useMint() {
     // TODO: replace with The Graph's subgraph call.
     const userDeposits = [
       {
-        blockNumber: "7594880",
+        // blockNumber: "7597085",
+        blockNumber: "7597413",
         id: parseInt("0x0", 16),
-        proof: await getProof("0x0", "7594880"),
-        amount: "10000000000000000",
+        proof: await getProof("0x0", "7597413"),
+        amount: "30000000000000000",
         depositor: "0x6b477781b0e68031109f21887e6b5afeaaeb002b",
         recipient: "0x6b477781b0e68031109f21887e6b5afeaaeb002b",
       },
@@ -132,23 +122,23 @@ export default function useMint() {
         encodeProof(userDeposit.proof.accountProof)
       );
       const multicallArgs = [
-        // wPowEthContract.interface.encodeFunctionData("relayStateRoot", [
-        //   userDeposit.blockNumber,
-        //   inclusionBlockStateRoot,
-        //   envelope.signature,
-        // ]),
+        wPowEthContract.interface.encodeFunctionData("relayStateRoot", [
+          userDeposit.blockNumber,
+          inclusionBlockStateRoot,
+          envelope.signature,
+        ]),
         // TODO: check if that this call is required.
         wPowEthContract.interface.encodeFunctionData(
           "updateDepositContractStorageRoot",
           [userDeposit.blockNumber, encodeProof(userDeposit.proof.accountProof)]
         ),
-        // wPowEthContract.interface.encodeFunctionData("mint", [
-        //   userDeposit.id,
-        //   userDeposit.recipient,
-        //   userDeposit.amount,
-        //   userDeposit.blockNumber,
-        //   encodeProof(userDeposit.proof.storageProof),
-        // ]),
+        wPowEthContract.interface.encodeFunctionData("mint", [
+          userDeposit.id,
+          userDeposit.recipient,
+          userDeposit.amount,
+          userDeposit.blockNumber,
+          encodeProof(userDeposit.proof.storageProof),
+        ]),
       ];
 
       const tx = await sendMintTx(multicallArgs);
