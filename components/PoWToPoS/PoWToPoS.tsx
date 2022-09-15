@@ -23,7 +23,7 @@ export default function PoWToPoS() {
 
   const { depositState, handleDeposit, setMax, ...packageForUseMint } =
       useDeposit([poWEthAmount, setPoWEthAmount], setIsLoading),
-    { handleMint } = useMint(poWEthAmount, packageForUseMint);
+    { handleMint } = useMint(/*poWEthAmount, packageForUseMint*/);
 
   return isPoW ? (
     //? Always active (or when someone has any ETH on PoW)
