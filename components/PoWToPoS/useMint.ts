@@ -15,7 +15,12 @@ const wPowEthInterface = new Interface([
   ]),
   wPowEthAddress = process.env.NEXT_PUBLIC_WPOWETH_POS_ADDRESS;
 
-export default function useMint() {
+export default function useMint({
+  powDepositId,
+  powDepositInclusionBlock,
+  accountProof,
+  storageProof,
+}) {
   const { account } = useEthers();
 
   const wPowEthContract = useMemo(

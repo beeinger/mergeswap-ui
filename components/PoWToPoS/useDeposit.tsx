@@ -1,15 +1,19 @@
 import {
   Interface,
+  defaultAbiCoder,
   formatEther,
   formatUnits,
+  hexZeroPad,
+  keccak256,
   parseEther,
 } from "ethers/lib/utils";
-import { useContext, useMemo, useRef } from "react";
+import { useContext, useMemo, useRef, useState } from "react";
 import { useContractFunction, useEtherBalance, useEthers } from "@usedapp/core";
 
 import { ChainsContext } from "shared/useChains";
 import { Contract } from "@ethersproject/contracts";
 import { PoW } from "shared/chains/custom";
+import { encodeProof } from "shared/utils/encode-proof";
 import { toast } from "react-toastify";
 import useWrapTxInToasts from "shared/useTransactionToast";
 
@@ -23,10 +27,16 @@ export default function useDeposit(
   [poWEthAmount, setPoWEthAmount],
   setIsLoading
 ) {
-  const { handleSwitchToPoS } = useContext(ChainsContext);
+  const { provider, handleSwitchToPoS } = useContext(ChainsContext);
   const { account } = useEthers();
   const etherBalance = useEtherBalance(account);
   const toastId = useRef(null);
+
+  const [powDepositId, setPowDepositId] = useState<number>(undefined),
+    [powDepositInclusionBlock, setPowDepositInclusionBlock] =
+      useState<number>(undefined),
+    [accountProof, setAccountProof] = useState<string>(""),
+    [storageProof, setStorageProof] = useState<string>("");
 
   const depositPowContract = useMemo(
     () => new Contract(depositPowAddress, depositPowInterface, PoW.provider),
@@ -41,7 +51,7 @@ export default function useDeposit(
       transactionName: "Deposit POWETH",
     }),
     onDepositComplete = async () => {
-      const { transaction: tx, status } = depositState;
+      const { transaction: tx, receipt, status } = depositState;
 
       if (status === "Success") {
         toastId.current = toast.dark(
@@ -62,6 +72,23 @@ export default function useDeposit(
         await tx.wait(
           Number(process.env.NEXT_PUBLIC_DEPOSIT_BLOCKS_CONFIRMATIONS)
         );
+
+        const { args } = depositPowContract.interface.parseLog(receipt.logs[0]);
+
+        const paddedSlot = hexZeroPad("0x" + powDepositId.toString(16), 32),
+          paddedKey = hexZeroPad(args[0].toHexString(), 32),
+          itemSlot = keccak256(paddedKey + paddedSlot.slice(2));
+
+        const proof = await provider.send("eth_getProof", [
+            process.env.NEXT_PUBLIC_DEPOSIT_POW_ADDRESS,
+            [itemSlot],
+            "0x" + powDepositInclusionBlock.toString(16),
+          ]),
+          rpcAccountProof = proof.accountProof,
+          rpcStorageProof = proof.storageProof[0].proof;
+
+        setAccountProof(encodeProof(rpcAccountProof));
+        setStorageProof(encodeProof(rpcStorageProof));
 
         toast.dismiss(toastId.current);
         toast.dark(
@@ -86,7 +113,15 @@ export default function useDeposit(
     const receipt = await sendDeposit(parseEther(poWEthAmount), account, {
       value: parseEther(poWEthAmount),
     });
-    if (receipt) setPoWEthAmount("");
+    if (receipt) {
+      const [depositId, , ,] = defaultAbiCoder.decode(
+        ["uint256", "uint256", "address", "address"],
+        receipt.logs[0].data
+      );
+      setPowDepositId(depositId.toNumber());
+      setPowDepositInclusionBlock(receipt.blockNumber);
+      setPoWEthAmount("");
+    }
     setIsLoading(false);
   };
 
@@ -112,5 +147,10 @@ export default function useDeposit(
     depositState,
     handleDeposit,
     setMax,
+    //? Package for useMint:
+    powDepositId,
+    powDepositInclusionBlock,
+    accountProof,
+    storageProof,
   };
 }
