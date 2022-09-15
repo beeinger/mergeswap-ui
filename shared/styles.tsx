@@ -46,6 +46,13 @@ export const globalStyles = (
           background-position: 0% 50%;
         }
       }
+
+      #acceptance .Toastify__toast-icon {
+        width: 40px;
+        height: 40px;
+
+        margin: 0 16px;
+      }
     `}
   />
 );

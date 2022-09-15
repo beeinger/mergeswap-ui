@@ -24,7 +24,13 @@ const App = ({ Component, pageProps }) => (
   <CacheProvider value={cache}>
     <DAppProvider config={config}>
       {globalStyles}
-      <ToastContainer position="top-left" />
+      <ToastContainer
+        enableMultiContainer
+        position="top-center"
+        containerId="acceptance"
+        style={{ width: "fit-content" }}
+      />
+      <ToastContainer enableMultiContainer position="top-left" />
       <Account />
       <Component {...pageProps} />
     </DAppProvider>

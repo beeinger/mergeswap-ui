@@ -1,9 +1,17 @@
 import { PoS, PoW } from "./chains/custom";
 import { createContext, useEffect, useMemo, useState } from "react";
 
+import agreeToContinue from "components/AgreeToContinue";
+import { toast } from "react-toastify";
 import { useEthers } from "@usedapp/core";
 
 export const ChainsContext = createContext<ReturnType<typeof useChains>>(null);
+
+const acceptUnauditedContractsRisk = () =>
+  window.localStorage.setItem(
+    "mergeswap_unaudited_contracts_risk_accepted",
+    "yes"
+  );
 
 export default function useChains() {
   const { activateBrowserWallet, chainId, switchNetwork, account } =
@@ -11,17 +19,42 @@ export default function useChains() {
   const [networkSwitchInProgress, setNetworkSwitchInProgress] =
     useState<number>(null);
 
+  const handleAccept = () => {
+      acceptUnauditedContractsRisk();
+      activateBrowserWallet();
+    },
+    connect = () => {
+      const isAccepted =
+        window.localStorage.getItem(
+          "mergeswap_unaudited_contracts_risk_accepted"
+        ) === "yes";
+
+      if (!isAccepted) {
+        toast.dark(
+          ({ closeToast }) => agreeToContinue(closeToast, handleAccept),
+          {
+            type: "warning",
+            autoClose: false,
+            closeOnClick: false,
+            draggable: false,
+            closeButton: false,
+            containerId: "acceptance",
+          }
+        );
+      } else return activateBrowserWallet();
+    };
+
   const handleSwitchToPoS = () => {
       if (!account) {
         setNetworkSwitchInProgress(PoS.chainId);
-        return activateBrowserWallet();
+        return connect();
       }
       return switchNetwork(PoS.chainId);
     },
     handleSwitchToPoW = () => {
       if (!account) {
         setNetworkSwitchInProgress(PoW.chainId);
-        return activateBrowserWallet();
+        return connect();
       }
       return switchNetwork(PoW.chainId);
     };
@@ -51,5 +84,6 @@ export default function useChains() {
     isPoW: chainId === PoW.chainId,
     isETHAtAll: chainId === PoS.chainId || chainId === PoW.chainId,
     provider,
+    connect,
   };
 }
