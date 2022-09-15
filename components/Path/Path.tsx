@@ -1,18 +1,17 @@
 import React, { useContext, useMemo } from "react";
 import { StyledPath, Title } from "./styles";
+import usePath, { PathContext } from "shared/usePath";
 
 import { ChainsContext } from "shared/useChains";
 import NoPathChosenYet from "components/NoPathChosenYet";
 import PathSwitcher from "components/PathSwitcher";
 import PoSToPoW from "components/PoSToPoW";
 import PoWToPoS from "components/PoWToPoS";
-import { useEthers } from "@usedapp/core";
-import usePath from "shared/usePath";
 
 export default function Path() {
-  const { isETHAtAll, isPoS, isPoW } = useContext(ChainsContext);
-  const { account } = useEthers();
-  const [path, setPath] = usePath(!account || !isETHAtAll);
+  const { isPoS, isPoW } = useContext(ChainsContext);
+  const pathContext = usePath(),
+    { path } = pathContext;
 
   const title = useMemo(() => {
     if (path === "PoW->PoS") {
@@ -32,25 +31,27 @@ export default function Path() {
   }, [isPoS, isPoW, path]);
 
   return (
-    <StyledPath
-      className="styledPath"
-      isInfo={path !== "PoW->PoS" && path !== "PoS->PoW"}
-    >
-      <PathSwitcher path={path} setPath={setPath} />
-      <Title layout style={{ borderRadius: 16 }}>
-        {path !== "PoW->PoS" && path !== "PoS->PoW" ? (
-          <NoPathChosenYet setPath={setPath} />
+    <PathContext.Provider value={pathContext}>
+      <StyledPath
+        className="styledPath"
+        isInfo={path !== "PoW->PoS" && path !== "PoS->PoW"}
+      >
+        <PathSwitcher />
+        <Title layout style={{ borderRadius: 16 }}>
+          {path !== "PoW->PoS" && path !== "PoS->PoW" ? (
+            <NoPathChosenYet />
+          ) : (
+            <h2>{title}</h2>
+          )}
+        </Title>
+        {path === "PoW->PoS" ? (
+          <PoWToPoS />
+        ) : path === "PoS->PoW" ? (
+          <PoSToPoW />
         ) : (
-          <h2>{title}</h2>
+          false
         )}
-      </Title>
-      {path === "PoW->PoS" ? (
-        <PoWToPoS />
-      ) : path === "PoS->PoW" ? (
-        <PoSToPoW />
-      ) : (
-        false
-      )}
-    </StyledPath>
+      </StyledPath>
+    </PathContext.Provider>
   );
 }

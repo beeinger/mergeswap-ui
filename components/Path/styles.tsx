@@ -19,7 +19,7 @@ export const StyledPath = styled(({ isInfo, ...rest }) => (
   padding-top: 16px;
   min-height: 200px;
   min-width: 25vw;
-  width: 350px;
+  width: fit-content;
   max-width: 500px;
 
   @media (max-width: 520px) {

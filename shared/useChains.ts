@@ -1,5 +1,5 @@
 import { PoS, PoW } from "./chains/custom";
-import { createContext, useMemo } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 
 import { useEthers } from "@usedapp/core";
 
@@ -8,15 +8,31 @@ export const ChainsContext = createContext<ReturnType<typeof useChains>>(null);
 export default function useChains() {
   const { activateBrowserWallet, chainId, switchNetwork, account } =
     useEthers();
+  const [networkSwitchInProgress, setNetworkSwitchInProgress] =
+    useState<number>(null);
 
   const handleSwitchToPoS = () => {
-      if (!account) activateBrowserWallet();
-      switchNetwork(PoS.chainId);
+      if (!account) {
+        setNetworkSwitchInProgress(PoS.chainId);
+        return activateBrowserWallet();
+      }
+      return switchNetwork(PoS.chainId);
     },
     handleSwitchToPoW = () => {
-      if (!account) activateBrowserWallet();
-      switchNetwork(PoW.chainId);
+      if (!account) {
+        setNetworkSwitchInProgress(PoW.chainId);
+        return activateBrowserWallet();
+      }
+      return switchNetwork(PoW.chainId);
     };
+
+  useEffect(() => {
+    if (account && networkSwitchInProgress) {
+      setNetworkSwitchInProgress(null);
+      switchNetwork(networkSwitchInProgress);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [networkSwitchInProgress, account]);
 
   const provider = useMemo(
     () =>

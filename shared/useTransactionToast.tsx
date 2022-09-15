@@ -66,6 +66,7 @@ export default function useWrapTxInToasts(
           closeButton: false,
           closeOnClick: false,
           draggable: false,
+          isLoading: true,
         } as UpdateOptions;
 
       if (!toastId.current) toastId.current = toast.dark(render, config);

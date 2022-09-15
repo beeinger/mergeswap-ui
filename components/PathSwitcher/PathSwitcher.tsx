@@ -1,15 +1,11 @@
 import { PathOption, StyledPathSwitcher } from "./styles";
+import React, { useContext } from "react";
 
 import { Path } from "shared/types";
-import React from "react";
+import { PathContext } from "shared/usePath";
 
-export default function PathSwitcher({
-  path,
-  setPath,
-}: {
-  path: Path;
-  setPath: React.Dispatch<React.SetStateAction<Path>>;
-}) {
+export default function PathSwitcher() {
+  const { path, setPath } = useContext(PathContext);
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) =>
     setPath(e.currentTarget.textContent as Path);
 

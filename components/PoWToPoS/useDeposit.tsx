@@ -91,20 +91,15 @@ export default function useDeposit(
         setAccountProof(encodeProof(rpcAccountProof));
         setStorageProof(encodeProof(rpcStorageProof));
 
-        toast.update(toastId.current, {
-          render: (
-            <>
-              Ok, all done!
-              <br />
-              Now switch to PoS and mint!
-            </>
-          ),
-          isLoading: false,
-          autoClose: 60000,
-          closeButton: true,
-          closeOnClick: true,
-          draggable: true,
-        });
+        toast.dismiss(toastId.current);
+        toast.dark(
+          <>
+            Ok, all done!
+            <br />
+            Now switch to PoS and mint!
+          </>,
+          { type: "success", autoClose: 20000 }
+        );
         handleSwitchToPoS();
       }
       // cleanup

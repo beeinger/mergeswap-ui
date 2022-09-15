@@ -16,7 +16,7 @@ export default function Account() {
           isActive={false}
           onClick={async () => {
             await navigator.clipboard.writeText(account);
-            toast.dark("Address copied to clipboard!");
+            toast.dark("Address copied to clipboard!", { type: "success" });
           }}
         >
           {shortenAddress(account)}
