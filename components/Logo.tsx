@@ -25,6 +25,11 @@ const Logo = styled(LogoImage)`
 
   width: 60px;
   height: 60px;
+
+  @media (max-width: 500px) {
+    width: 40px;
+    height: 40px;
+  }
 `;
 
 export default Logo;
