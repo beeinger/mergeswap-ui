@@ -22,7 +22,9 @@ const depositPowInterface = new Interface([
 
 export default function useDeposit(
   [poWEthAmount, setPoWEthAmount],
-  setIsLoading
+  setIsLoading,
+  setData,
+  isThereUnclaimedDeposit
 ) {
   const { handleSwitchToPoS } = useContext(ChainsContext);
   const { account } = useEthers();
@@ -83,7 +85,18 @@ export default function useDeposit(
   useWrapTxInToasts(depositState, onDepositComplete);
 
   const handleDeposit = async () => {
-    if (!poWEthAmount) return;
+    if (isThereUnclaimedDeposit())
+      return toast.dark(
+        "You have unclaimed deposit, please mint it on PoS first",
+        {
+          type: "warning",
+        }
+      );
+    if (!poWEthAmount)
+      return toast.dark("You need to deposit something... 0.0 doesn't cut it", {
+        type: "info",
+      });
+
     setIsLoading(true);
     const receipt = await sendDeposit(parseEther(poWEthAmount), account, {
       value: parseEther(poWEthAmount),
@@ -94,12 +107,12 @@ export default function useDeposit(
         receipt.logs[0].data
       );
 
-      window.localStorage.setItem("powDepositId", depositId.toNumber());
-      window.localStorage.setItem(
-        "powDepositInclusionBlock",
-        receipt.blockNumber.toString()
-      );
-      window.localStorage.setItem("powDepositAmount", poWEthAmount);
+      const depositData = {
+        powDepositId: depositId.toNumber(),
+        powDepositAmount: poWEthAmount,
+        powDepositInclusionBlock: receipt.blockNumber.toString(),
+      };
+      setData(depositData);
 
       setPoWEthAmount("");
     }

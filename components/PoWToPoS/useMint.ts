@@ -10,6 +10,7 @@ import { useContractFunction, useEthers } from "@usedapp/core";
 
 import { Contract } from "@ethersproject/contracts";
 import { encodeProof } from "shared/utils/encode-proof";
+import { toast } from "react-toastify";
 import { useMemo } from "react";
 import useWrapTxInToasts from "shared/useTransactionToast";
 
@@ -36,7 +37,7 @@ const getProof = async (mapKey: string, blockNumber: string) => {
   };
 };
 
-export default function useMint() {
+export default function useMint(handleCheck, clearData) {
   const { account } = useEthers();
 
   const wPowEthContract = useMemo(
@@ -55,8 +56,7 @@ export default function useMint() {
     onMintComplete = async () => {
       const { transaction: tx, receipt, status } = mintTxState;
 
-      if (status === "Success") {
-      }
+      if (status === "Success") clearData();
 
       // cleanup
       resetMintTxState();
@@ -76,13 +76,13 @@ export default function useMint() {
   };
 
   const handleMint = async () => {
-    const powDepositId = window.localStorage.getItem("powDepositId"),
-      powDepositInclusionBlock = window.localStorage.getItem(
-        "powDepositInclusionBlock"
-      ),
-      powDepositAmount = window.localStorage.getItem("powDepositAmount");
+    const { powDepositId, powDepositInclusionBlock, powDepositAmount } =
+      handleCheck();
 
-    if (!powDepositId || !powDepositInclusionBlock || !powDepositAmount) return;
+    if (!powDepositId || !powDepositInclusionBlock || !powDepositAmount)
+      return toast.dark("There is no deposit to mint, first make one on PoW", {
+        type: "info",
+      });
 
     const inclusionBlockStateRoot = await retrieveStateRoot(
       Number(powDepositInclusionBlock)

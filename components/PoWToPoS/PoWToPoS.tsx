@@ -11,6 +11,7 @@ import { useEtherBalance, useEthers } from "@usedapp/core";
 import { ChainsContext } from "shared/useChains";
 import { formatEther } from "ethers/lib/utils";
 import useDeposit from "./useDeposit";
+import useLocalDepositData from "./useLocalDepositData";
 import useMint from "./useMint";
 
 export default function PoWToPoS() {
@@ -21,11 +22,19 @@ export default function PoWToPoS() {
     { account } = useEthers(),
     etherBalance = useEtherBalance(account);
 
-  const { depositState, handleDeposit, setMax } = useDeposit(
+  const {
+      setData,
+      isThereUnclaimedDeposit,
+      getData: handleCheck,
+      clearData,
+    } = useLocalDepositData(),
+    { depositState, handleDeposit, setMax } = useDeposit(
       [poWEthAmount, setPoWEthAmount],
-      setIsLoading
+      setIsLoading,
+      setData,
+      isThereUnclaimedDeposit
     ),
-    { handleMint } = useMint();
+    { handleMint } = useMint(handleCheck, clearData);
 
   return isPoW ? (
     //? Always active (or when someone has any ETH on PoW)
