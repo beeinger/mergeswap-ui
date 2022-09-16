@@ -1,3 +1,4 @@
+import { useEthers, useTokenBalance } from "@usedapp/core";
 import {
   Balance,
   ConfirmTransaction,
@@ -5,13 +6,29 @@ import {
   InteractionContainer,
   MaxButton,
 } from "components/Path/styles";
+import { useLocalWithdrawalData } from "components/PoWToPoS/useLocalDepositData";
+import { formatEther } from "ethers/lib/utils";
 import React, { useContext, useState } from "react";
 
 import { ChainsContext } from "shared/useChains";
+import useWithdraw from "./useWithdraw";
 
 export default function PoSToPoW() {
   const { isPoS } = useContext(ChainsContext);
   const [poWEthTokensAmount, setPoWEthTokensAmount] = useState("");
+  const { account } = useEthers();
+  const wPowEthBalance = useTokenBalance(
+    process.env.NEXT_PUBLIC_WPOWETH_POS_ADDRESS!,
+    account
+  );
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { setData } = useLocalWithdrawalData();
+  const { handleWithdrawal, withdrawalState } = useWithdraw({
+    setIsLoading,
+    setPoWEthTokensAmount,
+    setData,
+  });
 
   return isPoS ? (
     //? Should be active only when person has our tokens that represent ETH PoW on PoS
@@ -22,10 +39,23 @@ export default function PoSToPoW() {
         value={poWEthTokensAmount.slice(0, 9)}
       />
       <Balance>
-        Balance: {"todo"}
-        <MaxButton>max</MaxButton>
+        Balance: {formatEther(wPowEthBalance || "0").slice(0, 7)}
+        <MaxButton
+          onClick={() =>
+            setPoWEthTokensAmount(
+              formatEther(wPowEthBalance.gte(0) ? wPowEthBalance : 0)
+            )
+          }
+        >
+          max
+        </MaxButton>
       </Balance>
-      <ConfirmTransaction>withdraw</ConfirmTransaction>
+      <ConfirmTransaction
+        disabled={withdrawalState.status !== "None" || isLoading}
+        onClick={() => handleWithdrawal(wPowEthBalance.toString(), account)}
+      >
+        withdraw
+      </ConfirmTransaction>
     </InteractionContainer>
   ) : (
     //? Should be active only when someone has burned our ETH PoW tokens on PoS
