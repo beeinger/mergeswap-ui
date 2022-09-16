@@ -33,7 +33,7 @@ const getLocalWithdrawalData = (): WithdrawalData => {
       posWithdrawalId: window.localStorage.getItem("posWithdrawalId"),
       posWithdrawalAmount: window.localStorage.getItem("posWithdrawalAmount"),
       posWithdrawalInclusionBlock: window.localStorage.getItem(
-        "posWithradawlInclusionBlock"
+        "posWithradawalInclusionBlock"
       ),
     } as WithdrawalData;
   },
@@ -70,7 +70,7 @@ export default function useLocalDepositData() {
 
   return {
     isThereUnclaimedDeposit,
-    getData,
+    getData: getLocalDepositData,
     setData: setLocalDepositData,
     clearData: clearLocalDepositData,
   };
