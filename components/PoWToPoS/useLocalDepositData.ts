@@ -70,7 +70,7 @@ export default function useLocalDepositData() {
 
   return {
     isThereUnclaimedDeposit,
-    getData: getLocalDepositData,
+    getData,
     setData: setLocalDepositData,
     clearData: clearLocalDepositData,
   };
