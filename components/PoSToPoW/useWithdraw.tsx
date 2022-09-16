@@ -1,7 +1,7 @@
 import { useContext, useMemo, useRef } from "react";
 import { useContractFunction } from "@usedapp/core";
 import { Contract } from "ethers";
-import { defaultAbiCoder, Interface, parseEther } from "ethers/lib/utils";
+import { defaultAbiCoder, Interface } from "ethers/lib/utils";
 import { PoS } from "shared/chains/custom";
 import { toast } from "react-toastify";
 import useWrapTxInToasts from "shared/useTransactionToast";
@@ -42,12 +42,12 @@ export default function useWithdraw({
     if (receipt) {
       const [withdrawalId, amount] = defaultAbiCoder.decode(
         ["uint256", "uint256", "address", "address"],
-        receipt.logs[0].data
+        receipt.logs[1].data
       );
 
       const depositData = {
         posWithdrawalId: withdrawalId.toNumber(),
-        powDepositAmount: amount,
+        powDepositAmount: amount.toString(),
         posWithdrawalInclusionBlock: receipt.blockNumber.toString(),
       };
       setData(depositData);
