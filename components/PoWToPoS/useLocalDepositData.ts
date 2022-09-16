@@ -11,7 +11,7 @@ const getLocalDepositData = () => {
     window.localStorage.setItem("powDepositId", depositData.powDepositId);
     window.localStorage.setItem(
       "powDepositInclusionBlock",
-      depositData.powDepositId
+      depositData.powDepositInclusionBlock
     );
     window.localStorage.setItem(
       "powDepositAmount",
