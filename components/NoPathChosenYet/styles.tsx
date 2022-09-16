@@ -1,7 +1,12 @@
 import styled from "@emotion/styled";
 
 export const StyledNoPathChosenYet = styled.div`
-  h2 {
+  > h2 {
+    margin-bottom: 0;
+  }
+
+  > span {
+    font-size: 0.75rem;
     margin-bottom: 16px;
   }
 

@@ -53,6 +53,8 @@ export default function useDeposit(
             <br />
             Awaiting {process.env.NEXT_PUBLIC_DEPOSIT_BLOCKS_CONFIRMATIONS}{" "}
             blocks confirmations...
+            <br />
+            After that, please mint quickly, PoW has some syncing problems...
           </>,
           {
             autoClose: false,

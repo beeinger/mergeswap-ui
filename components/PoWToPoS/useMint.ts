@@ -26,14 +26,25 @@ const getProof = async (mapKey: string, blockNumber: string) => {
   const paddedSlot = hexZeroPad("0x3", 32);
   const paddedKey = hexZeroPad(mapKey, 32);
   const itemSlot = keccak256(paddedKey + paddedSlot.slice(2));
-  const proof = await PoW.provider.send("eth_getProof", [
-    process.env.NEXT_PUBLIC_DEPOSIT_POW_ADDRESS,
-    [itemSlot],
-    hexValue(Number(blockNumber)),
-  ]);
+
+  const proof = await PoW.provider
+    .send("eth_getProof", [
+      process.env.NEXT_PUBLIC_DEPOSIT_POW_ADDRESS,
+      [itemSlot],
+      hexValue(Number(blockNumber)),
+    ])
+    .catch((err) => {
+      toast.dark(
+        "😕 Sorry, the network is out-of-sync (not our fault), please try again!)"
+      );
+      return { error: true, message: err.message };
+    });
+
   return {
-    storageProof: proof.storageProof[0].proof,
-    accountProof: proof.accountProof,
+    storageProof: proof?.storageProof?.[0]?.proof,
+    accountProof: proof?.accountProof,
+    error: proof.error || false,
+    message: proof.message || "",
   };
 };
 
@@ -93,10 +104,12 @@ export default function useMint(handleCheck, clearData) {
     const res = await response.json();
     const { envelope } = res;
 
+    // handle error
     const proof = await getProof(
       "0x" + parseInt(powDepositId).toString(16),
       powDepositInclusionBlock
     );
+    if (proof.error) return resetMintTxState();
 
     const multicallArgs = [
       wPowEthContract.interface.encodeFunctionData("relayStateRoot", [

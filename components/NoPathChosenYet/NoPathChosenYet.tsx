@@ -83,6 +83,9 @@ export default function NoPathChosenYet() {
       onBlur={handleBlur}
     >
       <h2>Choose the path you wish to follow</h2>
+      <span>
+        <b>Note:</b> Do these steps briskly, PoW has some syncing issues...
+      </span>
       <ColumnContainer>
         <div onClick={handleClick("PoW->PoS")}>
           <h3>{"PoW->PoS"}</h3>
