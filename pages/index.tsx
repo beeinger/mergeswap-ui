@@ -7,6 +7,11 @@ import Path from "components/Path";
 import React from "react";
 import styled from "@emotion/styled";
 
+const title = "MergeSwap - PoW <> PoS bridge",
+  name = "MergeSwap",
+  description =
+    "MergeSwap is a trust minimized lock/burn bridge using storage proofs! It lets you exchange your ETHW (PoW ETH) to WPoWETH (an ERC-20 token that represents PoW ETH on PoS) and the other way around - burn WPoWETH on PoS and redeem ETHW on PoW.";
+
 export default function Index() {
   const chains = useChains();
 
@@ -14,17 +19,14 @@ export default function Index() {
     <>
       <Head>
         {/* <!--  Basic Tags --> */}
-        <title>{"MergeSwap - PoW <> PoS bridge"}</title>
+        <title>{title}</title>
         <link rel="icon" href="/favicon.ico" />
         <meta charSet="UTF-8" />
-        <meta name="description" content="MergeSwap bla bla bla" />
+        <meta name="description" content={description} />
         <meta name="keywords" content="MergeSwap, ETH, Ethereum, merge" />
 
         {/* <!--  Essential META Tags --> */}
-        <meta
-          property="og:title"
-          content={`MergeSwap - PoW ${"<>"} PoS bridge`}
-        />
+        <meta property="og:title" content={title} />
         <meta property="og:type" content="website" />
         <meta
           property="og:image"
@@ -34,9 +36,12 @@ export default function Index() {
         <meta name="twitter:card" content="summary_large_image" />
 
         {/* <!--  Non-Essential, But Recommended --> */}
-        <meta property="og:description" content="Mergewap bla bla bla" />
-        <meta property="og:site_name" content="MergeSwap" />
-        <meta name="twitter:image:alt" content="bla bla bla" />
+        <meta property="og:description" content={description} />
+        <meta property="og:site_name" content={name} />
+        <meta
+          name="twitter:image:alt"
+          content="our beautiful logo on a gradient background <3"
+        />
 
         {/* <!-- Favicon & manifest --> */}
         <link
