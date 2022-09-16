@@ -6,47 +6,47 @@ export type ChainPlus = Chain & {
 };
 
 export const PoW: ChainPlus = {
-  chainId: 5,
-  chainName: "Goerli Test Network",
-  isTestChain: true,
+  chainId: 10001,
+  chainName: "ETHW-mainnet",
+  isTestChain: false,
   isLocalChain: false,
-  multicallAddress: "0x77dca2c955b15e9de4dbbcf1246b4b85b651e50e",
+  multicallAddress: "0xeefba1e63905ef1d7acba5a8513c70307c1ce441",
   getExplorerAddressLink: (address: string) =>
-    `https://goerli.etherscan.io/address/${address}`,
+    `https://mainnet.ethwscan.com/address/${address}`,
   getExplorerTransactionLink: (transactionHash: string) =>
-    `https://goerli.etherscan.io/tx/${transactionHash}`,
+    `https://mainnet.ethwscan.com/tx/${transactionHash}`,
   provider: new providers.JsonRpcProvider(
     process.env.NEXT_PUBLIC_POW_HTTP_PROVIDER
   ),
   // Optional parameters:
-  rpcUrl: "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
-  blockExplorerUrl: "https://goerli.etherscan.io",
+  rpcUrl: process.env.NEXT_PUBLIC_POW_HTTP_PROVIDER,
+  blockExplorerUrl: "https://mainnet.ethwscan.com",
   nativeCurrency: {
-    name: "ETH",
-    symbol: "ETH",
+    name: "ETHW",
+    symbol: "ETHW",
     decimals: 18,
   },
 };
 
 export const PoS: ChainPlus = {
-  chainId: 80001,
-  chainName: "Mumbai",
-  isTestChain: true,
+  chainId: 1,
+  chainName: "Ethereum Mainnet",
+  isTestChain: false,
   isLocalChain: false,
-  multicallAddress: "0x08411ADd0b5AA8ee47563b146743C13b3556c9Cc",
+  multicallAddress: "0xeefba1e63905ef1d7acba5a8513c70307c1ce441",
   getExplorerAddressLink: (address: string) =>
-    `https://mumbai.polygonscan.com/address/${address}`,
+    `https://etherscan.io/address/${address}`,
   getExplorerTransactionLink: (transactionHash: string) =>
-    `https://mumbai.polygonscan.com/tx/${transactionHash}`,
+    `https://etherscan.io/tx/${transactionHash}`,
   provider: new providers.JsonRpcProvider(
     process.env.NEXT_PUBLIC_POS_HTTP_PROVIDER
   ),
   // Optional parameters:
-  rpcUrl: "https://matic-mumbai.chainstacklabs.com",
-  blockExplorerUrl: "https://mumbai.polygonscan.com",
+  rpcUrl: process.env.NEXT_PUBLIC_POS_HTTP_PROVIDER,
+  blockExplorerUrl: "https://etherscan.io",
   nativeCurrency: {
-    name: "MATIC",
-    symbol: "MATIC",
+    name: "ETH",
+    symbol: "ETH",
     decimals: 18,
   },
 };
