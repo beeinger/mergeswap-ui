@@ -84,9 +84,6 @@ export default function useMint(handleCheck, clearData) {
         type: "info",
       });
 
-    if (powDepositInclusionBlock == 0)
-      throw new Error("Invalid powDepositInclusionBlock (0)");
-
     const inclusionBlockStateRoot = await retrieveStateRoot(
       Number(powDepositInclusionBlock)
     );
