@@ -59,3 +59,16 @@ export const Center = styled.div<{ onClick?: any }>`
     opacity: ${({ onClick }) => (onClick ? 0.65 : 1)};
   }
 `;
+
+export const MobileCenter = styled.div`
+  display: none;
+  @media (max-width: 500px) {
+    display: block;
+  }
+`;
+export const DesktopCenter = styled.div`
+  display: none;
+  @media (min-width: 500px) {
+    display: block;
+  }
+`;

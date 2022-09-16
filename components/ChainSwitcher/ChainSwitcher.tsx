@@ -1,4 +1,10 @@
-import { Center, Option, StyledChainSwitcher } from "./styles";
+import {
+  Center,
+  DesktopCenter,
+  MobileCenter,
+  Option,
+  StyledChainSwitcher,
+} from "./styles";
 import React, { useContext } from "react";
 
 import { ChainsContext } from "shared/useChains";
@@ -26,11 +32,16 @@ export default function ChainSwitcher() {
         PoW
       </Option>
       <Center onClick={!account ? connect : undefined}>
-        {account
-          ? isETHAtAll
-            ? "ETH"
-            : "< choose network >"
-          : "CONNECT WALLET"}
+        <DesktopCenter>
+          {account
+            ? isETHAtAll
+              ? "ETH"
+              : "< choose network >"
+            : "CONNECT WALLET"}
+        </DesktopCenter>
+        <MobileCenter>
+          {account ? (isETHAtAll ? "ETH" : "< choose >") : "CONNECT"}
+        </MobileCenter>
       </Center>
       <Option
         isActive={account && isPoS}
