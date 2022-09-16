@@ -88,7 +88,7 @@ export default function NoPathChosenYet() {
           <h3>{"PoW->PoS"}</h3>
           <ol>
             <li>
-              Deposit your PoW ETH
+              Deposit your ETHW
               <br />
               to our contract on PoW
             </li>
@@ -123,9 +123,9 @@ export default function NoPathChosenYet() {
               PoS
             </li>
             <li>
-              Redeem PoW ETH from
+              Redeem ETHW from our
               <br />
-              our contract on PoW
+              contract on PoW
             </li>
           </ol>
         </div>
