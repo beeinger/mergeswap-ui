@@ -5,6 +5,7 @@ import { useContractFunction, useEthers } from "@usedapp/core";
 import { Contract } from "ethers";
 import { encodeProof } from "shared/utils/encode-proof";
 import getProof from "shared/utils/get-proof";
+import retrieveStateRoot from "shared/utils/retreive-state-root";
 import { toast } from "react-toastify";
 import { useMemo } from "react";
 import useWrapTxInToasts from "shared/useTransactionToast";
@@ -26,23 +27,22 @@ export default function useRedeem(getData, clearData) {
   );
 
   const {
-    state: redeemState,
-    send: sendRedeem,
-    resetState: resetRedeemState,
-  } = useContractFunction(depositPowContract, "multicall", {
-    transactionName: "Redeem ETHW",
-  });
+      state: redeemState,
+      send: sendRedeem,
+      resetState: resetRedeemState,
+    } = useContractFunction(depositPowContract, "multicall", {
+      transactionName: "Redeem ETHW",
+    }),
+    onRedeemComplete = async () => {
+      const { transaction: tx, receipt, status } = redeemState;
 
-  const retrieveStateRoot = async (blockNumber: number) => {
-    const { stateRoot } = await PoS.provider.send("eth_getBlockByNumber", [
-      hexValue(blockNumber),
-      true,
-    ]);
-    if (!stateRoot)
-      throw new Error(`could not retrieve state root for block ${blockNumber}`);
+      // TODO: save receipt.
+      if (status === "Success") clearData();
+      // cleanup
+      resetRedeemState();
+    };
 
-    return stateRoot;
-  };
+  useWrapTxInToasts(redeemState, onRedeemComplete);
 
   const handleRedeem = async () => {
     const {
@@ -65,13 +65,15 @@ export default function useRedeem(getData, clearData) {
     }
 
     const inclusionBlockStateRoot = await retrieveStateRoot(
-      Number(posWithdrawalInclusionBlock)
+      Number(posWithdrawalInclusionBlock),
+      PoS.provider
     );
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_ORACLE_API_URL}/?chainHandle=eth-pos-mainnet&blockNumber=${posWithdrawalInclusionBlock}`
     );
     const res = await response.json();
     const { envelope } = res;
+
     const proof = await getProof(
       "0x" + parseInt(posWithdrawalId).toString(16),
       posWithdrawalInclusionBlock,
@@ -79,6 +81,7 @@ export default function useRedeem(getData, clearData) {
       process.env.NEXT_PUBLIC_WPOWETH_POS_ADDRESS
     );
     if (proof.error) return resetRedeemState();
+
     const multicallArgs = [
       depositPowContract.interface.encodeFunctionData("relayStateRoot", [
         posWithdrawalInclusionBlock,
@@ -102,22 +105,7 @@ export default function useRedeem(getData, clearData) {
     await sendRedeem(multicallArgs);
   };
 
-  const onRedeemComplete = async () => {
-    const { transaction: tx, receipt, status } = redeemState;
-
-    // TODO: save receipt.
-
-    if (status === "Success") clearData();
-    // cleanup
-    resetRedeemState();
-  };
-
-  useWrapTxInToasts(redeemState, onRedeemComplete);
-
   return {
     handleRedeem,
-    sendRedeem,
-    redeemState,
-    resetRedeemState,
   };
 }

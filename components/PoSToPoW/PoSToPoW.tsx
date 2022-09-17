@@ -9,7 +9,6 @@ import React, { useContext, useState } from "react";
 
 import { ChainsContext } from "shared/useChains";
 import { formatEther } from "ethers/lib/utils";
-import { useEthers } from "@usedapp/core";
 import { useLocalWithdrawalData } from "shared/useData";
 import useRedeem from "./useRedeem";
 import useWithdraw from "./useWithdraw";
@@ -17,7 +16,6 @@ import useWithdraw from "./useWithdraw";
 export default function PoSToPoW() {
   const { isPoS } = useContext(ChainsContext);
   const [poWEthTokensAmount, setPoWEthTokensAmount] = useState("");
-  const { account } = useEthers();
   const [isLoading, setIsLoading] = useState(false);
 
   const { setData, getData, clearData, isThereUnclaimedWithdrawal } =

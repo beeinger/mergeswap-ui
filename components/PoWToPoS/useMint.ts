@@ -5,6 +5,7 @@ import { useContractFunction, useEthers } from "@usedapp/core";
 import { Contract } from "@ethersproject/contracts";
 import { encodeProof } from "shared/utils/encode-proof";
 import getProof from "shared/utils/get-proof";
+import retrieveStateRoot from "shared/utils/retreive-state-root";
 import { toast } from "react-toastify";
 import { useMemo } from "react";
 import useWrapTxInToasts from "shared/useTransactionToast";
@@ -44,17 +45,6 @@ export default function useMint(getData, clearData) {
 
   useWrapTxInToasts(mintTxState, onMintComplete);
 
-  const retrieveStateRoot = async (blockNumber: number) => {
-    const { stateRoot } = await PoW.provider.send("eth_getBlockByNumber", [
-      hexValue(blockNumber),
-      true,
-    ]);
-    if (!stateRoot)
-      throw new Error(`could not retrieve state root for block ${blockNumber}`);
-
-    return stateRoot;
-  };
-
   const handleMint = async () => {
     const { powDepositId, powDepositInclusionBlock, powDepositAmount } =
       getData();
@@ -65,7 +55,8 @@ export default function useMint(getData, clearData) {
       });
 
     const inclusionBlockStateRoot = await retrieveStateRoot(
-      Number(powDepositInclusionBlock)
+      Number(powDepositInclusionBlock),
+      PoW.provider
     );
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_ORACLE_API_URL}/?chainHandle=eth-pow-mainnet&blockNumber=${powDepositInclusionBlock}`
@@ -73,7 +64,6 @@ export default function useMint(getData, clearData) {
     const res = await response.json();
     const { envelope } = res;
 
-    // handle error
     const proof = await getProof(
       "0x" + parseInt(powDepositId).toString(16),
       powDepositInclusionBlock,

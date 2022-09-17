@@ -1,4 +1,9 @@
-import { Interface, defaultAbiCoder, formatEther } from "ethers/lib/utils";
+import {
+  Interface,
+  defaultAbiCoder,
+  formatEther,
+  parseEther,
+} from "ethers/lib/utils";
 import { useContext, useMemo, useRef } from "react";
 import { useContractFunction, useEthers, useTokenBalance } from "@usedapp/core";
 
@@ -35,12 +40,58 @@ export default function useWithdraw(
   );
 
   const {
-    state: withdrawalState,
-    send: sendWithdrawal,
-    resetState: resetWithdrawalState,
-  } = useContractFunction(wPowEthContract, "withdraw", {
-    transactionName: "Withdraw POWETH",
-  });
+      state: withdrawalState,
+      send: sendWithdrawal,
+      resetState: resetWithdrawalState,
+    } = useContractFunction(wPowEthContract, "withdraw", {
+      transactionName: "Withdraw POWETH",
+    }),
+    onDepositComplete = async () => {
+      const { transaction: tx, receipt, status } = withdrawalState;
+
+      // TODO: save receipt.
+      if (status === "Success") {
+        toastId.current = toast.dark(
+          <>
+            Withdrawn ETH PoW successfully!
+            <br />
+            Awaiting {
+              process.env.NEXT_PUBLIC_WITHDRAWAL_BLOCKS_CONFIRMATIONS
+            }{" "}
+            blocks confirmations...
+            <br />
+            After that, please withdraw quickly, PoW has some syncing
+            problems...
+          </>,
+          {
+            autoClose: false,
+            closeButton: false,
+            closeOnClick: false,
+            draggable: false,
+            isLoading: true,
+          }
+        );
+
+        await tx.wait(
+          Number(process.env.NEXT_PUBLIC_WITHDRAWAL_BLOCKS_CONFIRMATIONS)
+        );
+
+        toast.dismiss(toastId.current);
+        toast.dark(
+          <>
+            Ok, all done!
+            <br />
+            Now switch to PoW and withdraw!
+          </>,
+          { type: "success", autoClose: 20000 }
+        );
+        handleSwitchToPoW();
+      }
+      // cleanup
+      resetWithdrawalState();
+    };
+
+  useWrapTxInToasts(withdrawalState, onDepositComplete);
 
   const handleWithdrawal = async () => {
     if (isThereUnclaimedWithdrawal())
@@ -59,7 +110,7 @@ export default function useWithdraw(
       );
 
     setIsLoading(true);
-    const receipt = await sendWithdrawal(wPowEthAmount, account);
+    const receipt = await sendWithdrawal(parseEther(wPowEthAmount), account);
     if (receipt) {
       const [withdrawalId, amount] = defaultAbiCoder.decode(
         ["uint256", "uint256", "address", "address"],
@@ -78,53 +129,6 @@ export default function useWithdraw(
     setIsLoading(false);
   };
 
-  const onDepositComplete = async () => {
-    const { transaction: tx, receipt, status } = withdrawalState;
-
-    // TODO: save receipt.
-
-    if (status === "Success") {
-      toastId.current = toast.dark(
-        <>
-          Withdrawn ETH PoW successfully!
-          <br />
-          Awaiting {
-            process.env.NEXT_PUBLIC_WITHDRAWAL_BLOCKS_CONFIRMATIONS
-          }{" "}
-          blocks confirmations...
-          <br />
-          After that, please withdraw quickly, PoW has some syncing problems...
-        </>,
-        {
-          autoClose: false,
-          closeButton: false,
-          closeOnClick: false,
-          draggable: false,
-          isLoading: true,
-        }
-      );
-
-      await tx.wait(
-        Number(process.env.NEXT_PUBLIC_WITHDRAWAL_BLOCKS_CONFIRMATIONS)
-      );
-
-      toast.dismiss(toastId.current);
-      toast.dark(
-        <>
-          Ok, all done!
-          <br />
-          Now switch to PoW and withdraw!
-        </>,
-        { type: "success", autoClose: 20000 }
-      );
-      handleSwitchToPoW();
-    }
-    // cleanup
-    resetWithdrawalState();
-  };
-
-  useWrapTxInToasts(withdrawalState, onDepositComplete);
-
   const setMax = () =>
     setPoWEthTokensAmount(
       formatEther(wPowEthBalance.gte(0) ? wPowEthBalance : 0)
@@ -132,9 +136,7 @@ export default function useWithdraw(
 
   return {
     handleWithdrawal,
-    sendWithdrawal,
     withdrawalState,
-    resetWithdrawalState,
     setMax,
     wPowEthBalance,
   };
