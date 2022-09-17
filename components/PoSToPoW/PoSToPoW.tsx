@@ -41,7 +41,10 @@ export default function PoSToPoW() {
     <InteractionContainer>
       <EthInput
         placeholder="0.0"
-        onChange={(e) => setPoWEthTokensAmount(e.target.value)}
+        onChange={(e) =>
+          /^[0-9]*\.?[0-9]*$/.test(e.target.value) &&
+          setPoWEthTokensAmount(e.target.value)
+        }
         value={poWEthTokensAmount.slice(0, 9)}
       />
       <Balance>
@@ -66,8 +69,7 @@ export default function PoSToPoW() {
   ) : (
     //? Should be active only when someone has burned our ETH PoW tokens on PoS
     <InteractionContainer>
-      <EthInput placeholder="all" />
-      {/* <EthInput disabled value={"all"} /> */}
+      <EthInput disabled value={"all"} />
       <Balance>redeem tokens withdrawn on PoS</Balance>
       <ConfirmTransaction onClick={() => handleRedeem(account)}>
         redeem
