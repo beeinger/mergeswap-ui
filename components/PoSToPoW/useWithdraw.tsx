@@ -6,7 +6,7 @@ import { PoS } from "shared/chains/custom";
 import { toast } from "react-toastify";
 import useWrapTxInToasts from "shared/useTransactionToast";
 import { ChainsContext } from "shared/useChains";
-import { WithdrawalData } from "components/PoWToPoS/useLocalDepositData";
+import { WithdrawalData } from "components/PoWToPoS/useData";
 
 const wPowEthInterface = new Interface([
   "function withdraw(uint256 amount, address recipient)",
@@ -37,7 +37,6 @@ export default function useWithdraw({
   });
 
   const handleWithdrawal = async (wPowEthAmount: string, recipient: string) => {
-    console.log("amount", wPowEthAmount);
     setIsLoading(true);
     const receipt = await sendWithdrawal(wPowEthAmount, recipient);
     if (receipt) {

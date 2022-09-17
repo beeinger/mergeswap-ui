@@ -6,11 +6,12 @@ import {
   InteractionContainer,
   MaxButton,
 } from "components/Path/styles";
-import { useLocalWithdrawalData } from "components/PoWToPoS/useLocalDepositData";
+import { useLocalWithdrawalData } from "components/PoWToPoS/useData";
 import { formatEther } from "ethers/lib/utils";
 import React, { useContext, useState } from "react";
 
 import { ChainsContext } from "shared/useChains";
+import useRedeem from "./useRedeem";
 import useWithdraw from "./useWithdraw";
 
 export default function PoSToPoW() {
@@ -28,6 +29,12 @@ export default function PoSToPoW() {
     setIsLoading,
     setPoWEthTokensAmount,
     setData,
+  });
+  const { getData, clearData } = useLocalWithdrawalData();
+  const { handleRedeem } = useRedeem({
+    getData,
+    clearData,
+    setIsLoading,
   });
 
   return isPoS ? (
@@ -60,16 +67,12 @@ export default function PoSToPoW() {
   ) : (
     //? Should be active only when someone has burned our ETH PoW tokens on PoS
     <InteractionContainer>
-      <EthInput
-        placeholder="0.0"
-        onChange={(e) => setPoWEthTokensAmount(e.target.value)}
-        value={poWEthTokensAmount.slice(0, 9)}
-      />
-      <Balance>
-        Balance: {"todo"}
-        <MaxButton>max</MaxButton>
-      </Balance>
-      <ConfirmTransaction>redeem</ConfirmTransaction>
+      <EthInput placeholder="all" />
+      {/* <EthInput disabled value={"all"} /> */}
+      <Balance>redeem tokens withdrawn on PoS</Balance>
+      <ConfirmTransaction onClick={() => handleRedeem(account)}>
+        redeem
+      </ConfirmTransaction>
     </InteractionContainer>
   );
 }
