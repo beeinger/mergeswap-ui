@@ -7,9 +7,10 @@ const getProof = async (
   mapKey: string,
   blockNumber: string,
   provider: JsonRpcProvider,
-  contractAddress: string
+  contractAddress: string,
+  slotIndex: string
 ) => {
-  const paddedSlot = hexZeroPad("0x6", 32);
+  const paddedSlot = hexZeroPad(slotIndex, 32);
   const paddedKey = hexZeroPad(mapKey, 32);
   const itemSlot = keccak256(paddedKey + paddedSlot.slice(2));
 

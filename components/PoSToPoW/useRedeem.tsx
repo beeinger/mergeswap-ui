@@ -78,7 +78,8 @@ export default function useRedeem(getData, clearData) {
       "0x" + parseInt(posWithdrawalId).toString(16),
       posWithdrawalInclusionBlock,
       PoS.provider,
-      process.env.NEXT_PUBLIC_WPOWETH_POS_ADDRESS
+      process.env.NEXT_PUBLIC_WPOWETH_POS_ADDRESS,
+      "0x6"
     );
     if (proof.error) return resetRedeemState();
 

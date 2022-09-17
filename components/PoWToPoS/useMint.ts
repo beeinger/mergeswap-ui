@@ -68,7 +68,8 @@ export default function useMint(getData, clearData) {
       "0x" + parseInt(powDepositId).toString(16),
       powDepositInclusionBlock,
       PoW.provider,
-      process.env.NEXT_PUBLIC_DEPOSIT_POW_ADDRESS
+      process.env.NEXT_PUBLIC_DEPOSIT_POW_ADDRESS,
+      "0x3"
     );
     if (proof.error) return resetMintTxState();
 
