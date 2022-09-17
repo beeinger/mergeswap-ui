@@ -1,12 +1,11 @@
-import { Interface, defaultAbiCoder } from "ethers/lib/utils";
+import { Interface, defaultAbiCoder, formatEther } from "ethers/lib/utils";
 import { useContext, useMemo, useRef } from "react";
+import { useContractFunction, useEthers, useTokenBalance } from "@usedapp/core";
 
 import { ChainsContext } from "shared/useChains";
 import { Contract } from "ethers";
 import { PoS } from "shared/chains/custom";
-import { WithdrawalData } from "components/PoWToPoS/useData";
 import { toast } from "react-toastify";
-import { useContractFunction } from "@usedapp/core";
 import useWrapTxInToasts from "shared/useTransactionToast";
 
 const wPowEthInterface = new Interface([
@@ -16,13 +15,19 @@ const wPowEthInterface = new Interface([
 
 const wPowEthIAddress = process.env.NEXT_PUBLIC_WPOWETH_POS_ADDRESS;
 
-export default function useWithdraw({
+export default function useWithdraw(
+  [wPowEthAmount, setPoWEthTokensAmount],
   setIsLoading,
-  setPoWEthTokensAmount,
   setData,
-}) {
+  isThereUnclaimedWithdrawal
+) {
   const toastId = useRef(null);
+  const { account } = useEthers();
   const { handleSwitchToPoW } = useContext(ChainsContext);
+  const wPowEthBalance = useTokenBalance(
+    process.env.NEXT_PUBLIC_WPOWETH_POS_ADDRESS!,
+    account
+  );
 
   const wPowEthContract = useMemo(
     () => new Contract(wPowEthIAddress, wPowEthInterface, PoS.provider),
@@ -37,16 +42,31 @@ export default function useWithdraw({
     transactionName: "Withdraw POWETH",
   });
 
-  const handleWithdrawal = async (wPowEthAmount: string, recipient: string) => {
+  const handleWithdrawal = async () => {
+    if (isThereUnclaimedWithdrawal())
+      return toast.dark(
+        "You have unclaimed withdrawal, please redeem it on PoW first",
+        {
+          type: "warning",
+        }
+      );
+    if (!wPowEthAmount)
+      return toast.dark(
+        "You need to withdraw something... 0.0 doesn't cut it",
+        {
+          type: "info",
+        }
+      );
+
     setIsLoading(true);
-    const receipt = await sendWithdrawal(wPowEthAmount, recipient);
+    const receipt = await sendWithdrawal(wPowEthAmount, account);
     if (receipt) {
       const [withdrawalId, amount] = defaultAbiCoder.decode(
         ["uint256", "uint256", "address", "address"],
         receipt.logs?.[1]?.data
       );
 
-      const withdrawalData: WithdrawalData = {
+      const withdrawalData = {
         posWithdrawalId: withdrawalId?.toNumber(),
         posWithdrawalAmount: amount?.toString(),
         posWithdrawalInclusionBlock: receipt.blockNumber?.toString(),
@@ -105,10 +125,17 @@ export default function useWithdraw({
 
   useWrapTxInToasts(withdrawalState, onDepositComplete);
 
+  const setMax = () =>
+    setPoWEthTokensAmount(
+      formatEther(wPowEthBalance.gte(0) ? wPowEthBalance : 0)
+    );
+
   return {
     handleWithdrawal,
     sendWithdrawal,
     withdrawalState,
     resetWithdrawalState,
+    setMax,
+    wPowEthBalance,
   };
 }

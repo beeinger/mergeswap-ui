@@ -77,8 +77,22 @@ export function useLocalDepositData() {
 }
 
 export function useLocalWithdrawalData() {
+  const getData = (): WithdrawalData =>
+      getLocalWithdrawalData() || ({} as WithdrawalData),
+    isThereUnclaimedWithdrawal = () => {
+      const {
+        posWithdrawalId,
+        posWithdrawalInclusionBlock,
+        posWithdrawalAmount,
+      } = getData();
+      return Boolean(
+        posWithdrawalId && posWithdrawalInclusionBlock && posWithdrawalAmount
+      );
+    };
+
   return {
-    getData: () => getLocalWithdrawalData(),
+    isThereUnclaimedWithdrawal,
+    getData,
     setData: setLocalWithdrawalData,
     clearData: clearLocalWithdrawalData,
   };

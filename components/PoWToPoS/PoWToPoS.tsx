@@ -11,7 +11,7 @@ import { useEtherBalance, useEthers } from "@usedapp/core";
 import { ChainsContext } from "shared/useChains";
 import { formatEther } from "ethers/lib/utils";
 import useDeposit from "./useDeposit";
-import { useLocalDepositData } from "./useData";
+import { useLocalDepositData } from "shared/useData";
 import useMint from "./useMint";
 
 export default function PoWToPoS() {
