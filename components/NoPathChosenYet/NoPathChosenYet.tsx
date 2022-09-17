@@ -18,13 +18,9 @@ export default function NoPathChosenYet() {
   const toastId = useRef(null);
 
   const handleClick = (path: Path) => () => {
-    // TODO: remove this check when PoS->PoW is available
-    if (path === "PoS->PoW") return setPath(path);
-
     if (
       disabled ||
       (path === "PoW->PoS" && !isPoW) ||
-      // @ts-ignore
       (path === "PoS->PoW" && !isPoS)
     ) {
       setPathSelectionInProgress(path);

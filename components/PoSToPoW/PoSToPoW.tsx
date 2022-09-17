@@ -1,4 +1,3 @@
-import { useEthers, useTokenBalance } from "@usedapp/core";
 import {
   Balance,
   ConfirmTransaction,
@@ -6,11 +5,12 @@ import {
   InteractionContainer,
   MaxButton,
 } from "components/Path/styles";
-import { useLocalWithdrawalData } from "components/PoWToPoS/useData";
-import { formatEther } from "ethers/lib/utils";
 import React, { useContext, useState } from "react";
+import { useEthers, useTokenBalance } from "@usedapp/core";
 
 import { ChainsContext } from "shared/useChains";
+import { formatEther } from "ethers/lib/utils";
+import { useLocalWithdrawalData } from "components/PoWToPoS/useData";
 import useRedeem from "./useRedeem";
 import useWithdraw from "./useWithdraw";
 
@@ -24,13 +24,12 @@ export default function PoSToPoW() {
   );
   const [isLoading, setIsLoading] = useState(false);
 
-  const { setData } = useLocalWithdrawalData();
+  const { setData, getData, clearData } = useLocalWithdrawalData();
   const { handleWithdrawal, withdrawalState } = useWithdraw({
     setIsLoading,
     setPoWEthTokensAmount,
     setData,
   });
-  const { getData, clearData } = useLocalWithdrawalData();
   const { handleRedeem } = useRedeem({
     getData,
     clearData,

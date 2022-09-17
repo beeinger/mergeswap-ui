@@ -43,8 +43,8 @@ const getProof = async (mapKey: string, blockNumber: string) => {
   return {
     storageProof: proof?.storageProof?.[0]?.proof,
     accountProof: proof?.accountProof,
-    error: proof.error || false,
-    message: proof.message || "",
+    error: proof?.error || false,
+    message: proof?.message || "",
   };
 };
 

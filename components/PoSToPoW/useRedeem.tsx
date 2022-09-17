@@ -1,12 +1,13 @@
-import { useMemo } from "react";
-import { useContractFunction } from "@usedapp/core";
-import { Contract } from "ethers";
-import { hexValue, hexZeroPad, Interface, keccak256 } from "ethers/lib/utils";
+import { Interface, hexValue, hexZeroPad, keccak256 } from "ethers/lib/utils";
 import { PoS, PoW } from "shared/chains/custom";
-import { toast } from "react-toastify";
-import useWrapTxInToasts from "shared/useTransactionToast";
+
+import { Contract } from "ethers";
 import { WithdrawalData } from "components/PoWToPoS/useData";
 import { encodeProof } from "shared/utils/encode-proof";
+import { toast } from "react-toastify";
+import { useContractFunction } from "@usedapp/core";
+import { useMemo } from "react";
+import useWrapTxInToasts from "shared/useTransactionToast";
 
 const depositPowInterface = new Interface([
   "function withdraw(uint256 withdrawalId, address recipient, uint256 amount, uint256 withdrawalBlockNumber, bytes memory storageProof)",
@@ -38,8 +39,8 @@ const getProof = async (mapKey: string, blockNumber: string) => {
   return {
     storageProof: proof?.storageProof?.[0]?.proof,
     accountProof: proof?.accountProof,
-    error: proof.error || false,
-    message: proof.message || "",
+    error: proof?.error || false,
+    message: proof?.message || "",
   };
 };
 
@@ -101,8 +102,6 @@ export default function useRedeem({ getData, clearData, setIsLoading }) {
       data.posWithdrawalInclusionBlock
     );
     if (proof.error) return resetRedeemState();
-    console.log("proof", proof);
-    console.log("contract address", depositPowContract.address);
     const multicallArgs = [
       depositPowContract.interface.encodeFunctionData("relayStateRoot", [
         data.posWithdrawalInclusionBlock,
@@ -124,9 +123,6 @@ export default function useRedeem({ getData, clearData, setIsLoading }) {
     ];
 
     const receipt = await sendRedeem(multicallArgs);
-    if (receipt) {
-      console.log(receipt);
-    }
 
     setIsLoading(false);
   };
@@ -136,13 +132,7 @@ export default function useRedeem({ getData, clearData, setIsLoading }) {
 
     // TODO: save receipt.
 
-    if (status === "Success") {
-      // toast.dismiss(toastId.current);
-      toast.dark(<>Successfully redeemed your ETH (POW)!</>, {
-        type: "success",
-        autoClose: 20000,
-      });
-    }
+    if (status === "Success") clearData();
     // cleanup
     resetRedeemState();
   };

@@ -1,12 +1,13 @@
+import { Interface, defaultAbiCoder } from "ethers/lib/utils";
 import { useContext, useMemo, useRef } from "react";
-import { useContractFunction } from "@usedapp/core";
-import { Contract } from "ethers";
-import { defaultAbiCoder, Interface } from "ethers/lib/utils";
-import { PoS } from "shared/chains/custom";
-import { toast } from "react-toastify";
-import useWrapTxInToasts from "shared/useTransactionToast";
+
 import { ChainsContext } from "shared/useChains";
+import { Contract } from "ethers";
+import { PoS } from "shared/chains/custom";
 import { WithdrawalData } from "components/PoWToPoS/useData";
+import { toast } from "react-toastify";
+import { useContractFunction } from "@usedapp/core";
+import useWrapTxInToasts from "shared/useTransactionToast";
 
 const wPowEthInterface = new Interface([
   "function withdraw(uint256 amount, address recipient)",
@@ -42,13 +43,13 @@ export default function useWithdraw({
     if (receipt) {
       const [withdrawalId, amount] = defaultAbiCoder.decode(
         ["uint256", "uint256", "address", "address"],
-        receipt.logs[1].data
+        receipt.logs?.[1]?.data
       );
 
       const withdrawalData: WithdrawalData = {
-        posWithdrawalId: withdrawalId.toNumber(),
-        posWithdrawalAmount: amount.toString(),
-        posWithdrawalInclusionBlock: receipt.blockNumber.toString(),
+        posWithdrawalId: withdrawalId?.toNumber(),
+        posWithdrawalAmount: amount?.toString(),
+        posWithdrawalInclusionBlock: receipt.blockNumber?.toString(),
       };
       setData(withdrawalData);
 
