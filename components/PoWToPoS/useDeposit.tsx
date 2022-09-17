@@ -106,13 +106,13 @@ export default function useDeposit(
     if (receipt) {
       const [depositId, , ,] = defaultAbiCoder.decode(
         ["uint256", "uint256", "address", "address"],
-        receipt.logs[0].data
+        receipt.logs?.[0]?.data
       );
 
       const depositData = {
-        powDepositId: depositId.toNumber(),
+        powDepositId: depositId?.toNumber(),
         powDepositAmount: poWEthAmount,
-        powDepositInclusionBlock: receipt.blockNumber.toString(),
+        powDepositInclusionBlock: receipt.blockNumber?.toString(),
       };
       setData(depositData);
 

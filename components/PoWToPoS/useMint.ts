@@ -1,15 +1,11 @@
-import {
-  Interface,
-  hexValue,
-  hexZeroPad,
-  keccak256,
-  parseEther,
-} from "ethers/lib/utils";
+import { Interface, hexValue, parseEther } from "ethers/lib/utils";
 import { PoS, PoW } from "shared/chains/custom";
 import { useContractFunction, useEthers } from "@usedapp/core";
 
 import { Contract } from "@ethersproject/contracts";
 import { encodeProof } from "shared/utils/encode-proof";
+import getProof from "shared/utils/get-proof";
+import retrieveStateRoot from "shared/utils/retreive-state-root";
 import { toast } from "react-toastify";
 import { useMemo } from "react";
 import useWrapTxInToasts from "shared/useTransactionToast";
@@ -22,33 +18,7 @@ const wPowEthInterface = new Interface([
   ]),
   wPowEthAddress = process.env.NEXT_PUBLIC_WPOWETH_POS_ADDRESS;
 
-const getProof = async (mapKey: string, blockNumber: string) => {
-  const paddedSlot = hexZeroPad("0x3", 32);
-  const paddedKey = hexZeroPad(mapKey, 32);
-  const itemSlot = keccak256(paddedKey + paddedSlot.slice(2));
-
-  const proof = await PoW.provider
-    .send("eth_getProof", [
-      process.env.NEXT_PUBLIC_DEPOSIT_POW_ADDRESS,
-      [itemSlot],
-      hexValue(Number(blockNumber)),
-    ])
-    .catch((err) => {
-      toast.dark(
-        "😕 Sorry, the network is out-of-sync (not our fault), please try again!)"
-      );
-      return { error: true, message: err.message };
-    });
-
-  return {
-    storageProof: proof?.storageProof?.[0]?.proof,
-    accountProof: proof?.accountProof,
-    error: proof.error || false,
-    message: proof.message || "",
-  };
-};
-
-export default function useMint(handleCheck, clearData) {
+export default function useMint(getData, clearData) {
   const { account } = useEthers();
 
   const wPowEthContract = useMemo(
@@ -75,20 +45,9 @@ export default function useMint(handleCheck, clearData) {
 
   useWrapTxInToasts(mintTxState, onMintComplete);
 
-  const retrieveStateRoot = async (blockNumber: number) => {
-    const { stateRoot } = await PoW.provider.send("eth_getBlockByNumber", [
-      hexValue(blockNumber),
-      true,
-    ]);
-    if (!stateRoot)
-      throw new Error(`could not retrieve state root for block ${blockNumber}`);
-
-    return stateRoot;
-  };
-
   const handleMint = async () => {
     const { powDepositId, powDepositInclusionBlock, powDepositAmount } =
-      handleCheck();
+      getData();
 
     if (!powDepositId || !powDepositInclusionBlock || !powDepositAmount)
       return toast.dark("There is no deposit to mint, first make one on PoW", {
@@ -96,7 +55,8 @@ export default function useMint(handleCheck, clearData) {
       });
 
     const inclusionBlockStateRoot = await retrieveStateRoot(
-      Number(powDepositInclusionBlock)
+      Number(powDepositInclusionBlock),
+      PoW.provider
     );
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_ORACLE_API_URL}/?chainHandle=eth-pow-mainnet&blockNumber=${powDepositInclusionBlock}`
@@ -104,10 +64,11 @@ export default function useMint(handleCheck, clearData) {
     const res = await response.json();
     const { envelope } = res;
 
-    // handle error
     const proof = await getProof(
       "0x" + parseInt(powDepositId).toString(16),
-      powDepositInclusionBlock
+      powDepositInclusionBlock,
+      PoW.provider,
+      process.env.NEXT_PUBLIC_DEPOSIT_POW_ADDRESS
     );
     if (proof.error) return resetMintTxState();
 

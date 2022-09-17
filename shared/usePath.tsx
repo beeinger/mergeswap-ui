@@ -20,9 +20,6 @@ export default function usePath() {
   );
 
   const setPath = (value: React.SetStateAction<Path>) => {
-    // TODO: remove this check when PoS->PoW is available
-    if (value === "PoS->PoW")
-      return toast.dark("🚧 This path is not yet available");
     if (disabled) {
       _setPath(null);
       toast.dark(

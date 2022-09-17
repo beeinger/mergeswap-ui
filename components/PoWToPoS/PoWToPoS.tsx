@@ -11,7 +11,7 @@ import { useEtherBalance, useEthers } from "@usedapp/core";
 import { ChainsContext } from "shared/useChains";
 import { formatEther } from "ethers/lib/utils";
 import useDeposit from "./useDeposit";
-import useLocalDepositData from "./useLocalDepositData";
+import { useLocalDepositData } from "shared/useData";
 import useMint from "./useMint";
 
 export default function PoWToPoS() {
@@ -66,12 +66,7 @@ export default function PoWToPoS() {
   ) : (
     //? Should be active only when someone has sent ETH PoW to PoS
     <InteractionContainer>
-      <EthInput
-        placeholder="0.0"
-        disabled
-        //TODO display amount here
-        value={"all"}
-      />
+      <EthInput disabled value={"all"} />
       <Balance>mint tokens deposited on PoW</Balance>
       <ConfirmTransaction onClick={handleMint}>mint</ConfirmTransaction>
     </InteractionContainer>
