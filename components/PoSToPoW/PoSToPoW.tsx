@@ -14,20 +14,20 @@ import useRedeem from "./useRedeem";
 import useWithdraw from "./useWithdraw";
 
 export default function PoSToPoW() {
-  const { isPoS } = useContext(ChainsContext);
-  const [poWEthTokensAmount, setPoWEthTokensAmount] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const { isPoS } = useContext(ChainsContext),
+    [poWEthTokensAmount, setPoWEthTokensAmount] = useState(""),
+    [isLoading, setIsLoading] = useState(false),
+    { setData, getData, clearData, isThereUnclaimedWithdrawal } =
+      useLocalWithdrawalData();
 
-  const { setData, getData, clearData, isThereUnclaimedWithdrawal } =
-    useLocalWithdrawalData();
   const { handleWithdrawal, withdrawalState, setMax, wPowEthBalance } =
-    useWithdraw(
-      [poWEthTokensAmount, setPoWEthTokensAmount],
-      setIsLoading,
-      setData,
-      isThereUnclaimedWithdrawal
-    );
-  const { handleRedeem } = useRedeem(getData, clearData);
+      useWithdraw(
+        [poWEthTokensAmount, setPoWEthTokensAmount],
+        setIsLoading,
+        setData,
+        isThereUnclaimedWithdrawal
+      ),
+    { redeemState, handleRedeem } = useRedeem(getData, clearData, setIsLoading);
 
   return isPoS ? (
     //? Should be active only when person has our tokens that represent ETH PoW on PoS
@@ -56,7 +56,12 @@ export default function PoSToPoW() {
     <InteractionContainer>
       <EthInput disabled value={"all"} />
       <Balance>redeem tokens withdrawn on PoS</Balance>
-      <ConfirmTransaction onClick={handleRedeem}>redeem</ConfirmTransaction>
+      <ConfirmTransaction
+        disabled={redeemState.status !== "None" || isLoading}
+        onClick={handleRedeem}
+      >
+        redeem
+      </ConfirmTransaction>
     </InteractionContainer>
   );
 }

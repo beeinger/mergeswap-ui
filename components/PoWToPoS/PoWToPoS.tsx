@@ -34,7 +34,7 @@ export default function PoWToPoS() {
       setData,
       isThereUnclaimedDeposit
     ),
-    { handleMint } = useMint(handleCheck, clearData);
+    { mintTxState, handleMint } = useMint(handleCheck, clearData, setIsLoading);
 
   return isPoW ? (
     //? Always active (or when someone has any ETH on PoW)
@@ -68,7 +68,12 @@ export default function PoWToPoS() {
     <InteractionContainer>
       <EthInput disabled value={"all"} />
       <Balance>mint tokens deposited on PoW</Balance>
-      <ConfirmTransaction onClick={handleMint}>mint</ConfirmTransaction>
+      <ConfirmTransaction
+        disabled={mintTxState.status !== "None" || isLoading}
+        onClick={handleMint}
+      >
+        mint
+      </ConfirmTransaction>
     </InteractionContainer>
   );
 }

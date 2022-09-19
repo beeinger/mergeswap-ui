@@ -10,6 +10,10 @@ export const StyledNoPathChosenYet = styled.div`
     margin-bottom: 16px;
   }
 
+  a {
+    color: #23a5d5;
+  }
+
   padding: 32px 0;
 
   width: fit-content;

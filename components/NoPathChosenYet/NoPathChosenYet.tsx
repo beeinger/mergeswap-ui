@@ -81,6 +81,15 @@ export default function NoPathChosenYet() {
       <h2>Choose the path you wish to follow</h2>
       <span>
         <b>Note:</b> Do these steps briskly, PoW has some syncing issues...
+        <br />
+        <b>Useful link:</b> You can{" "}
+        <a
+          target="_blank"
+          rel="noreferrer"
+          href="https://app.uniswap.org/#/swap?inputCurrency=0x325a87aabeaa1097011f4838d9152ba44e7f282b&outputCurrency=ETH"
+        >
+          swap WPoWETH on Uniswap
+        </a>
       </span>
       <ColumnContainer>
         <div onClick={handleClick("PoW->PoS")}>

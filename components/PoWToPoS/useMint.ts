@@ -18,7 +18,7 @@ const wPowEthInterface = new Interface([
   ]),
   wPowEthAddress = process.env.NEXT_PUBLIC_WPOWETH_POS_ADDRESS;
 
-export default function useMint(getData, clearData) {
+export default function useMint(getData, clearData, setIsLoading) {
   const { account } = useEthers();
 
   const wPowEthContract = useMemo(
@@ -54,6 +54,7 @@ export default function useMint(getData, clearData) {
         type: "info",
       });
 
+    setIsLoading(true);
     const inclusionBlockStateRoot = await retrieveStateRoot(
       Number(powDepositInclusionBlock),
       PoW.provider
@@ -107,7 +108,9 @@ export default function useMint(getData, clearData) {
         },
       },
     });
+
+    setIsLoading(false);
   };
 
-  return { handleMint };
+  return { handleMint, mintTxState };
 }

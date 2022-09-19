@@ -18,7 +18,7 @@ const depositPowInterface = new Interface([
   ]),
   depositPowAddress = process.env.NEXT_PUBLIC_DEPOSIT_POW_ADDRESS;
 
-export default function useRedeem(getData, clearData) {
+export default function useRedeem(getData, clearData, setIsLoading) {
   const { account } = useEthers();
 
   const depositPowContract = useMemo(
@@ -64,6 +64,8 @@ export default function useRedeem(getData, clearData) {
       );
     }
 
+    setIsLoading(true);
+
     const inclusionBlockStateRoot = await retrieveStateRoot(
       Number(posWithdrawalInclusionBlock),
       PoS.provider
@@ -104,9 +106,12 @@ export default function useRedeem(getData, clearData) {
     ];
 
     await sendRedeem(multicallArgs);
+
+    setIsLoading(false);
   };
 
   return {
+    redeemState,
     handleRedeem,
   };
 }
