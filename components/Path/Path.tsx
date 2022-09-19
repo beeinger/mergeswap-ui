@@ -37,7 +37,11 @@ export default function Path() {
         isInfo={path !== "PoW->PoS" && path !== "PoS->PoW"}
       >
         <PathSwitcher />
-        <Title layout style={{ borderRadius: 16 }}>
+        <Title
+          layout
+          style={{ borderRadius: 16 }}
+          noPathChosenYet={path !== "PoW->PoS" && path !== "PoS->PoW"}
+        >
           {path !== "PoW->PoS" && path !== "PoS->PoW" ? (
             <NoPathChosenYet />
           ) : (

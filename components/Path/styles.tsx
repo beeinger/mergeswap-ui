@@ -35,9 +35,11 @@ export const StyledPath = styled(({ isInfo, ...rest }) => (
 
   box-shadow: rgb(0 0 0 / 1%) 0px 0px 1px, rgb(0 0 0 / 4%) 0px 4px 8px,
     rgb(0 0 0 / 4%) 0px 16px 24px, rgb(0 0 0 / 1%) 0px 24px 32px;
+
+  margin-bottom: 16px;
 `;
 
-export const Title = styled(motion.div)`
+export const Title = styled(motion.div)<{ noPathChosenYet: boolean }>`
   margin: -1px;
   margin-top: -17px;
 
@@ -48,6 +50,10 @@ export const Title = styled(motion.div)`
   justify-content: center;
   align-items: center;
   padding: 0 16px;
+
+  @media (min-width: 501px) {
+    ${({ noPathChosenYet }) => noPathChosenYet && `width: calc(100% - 48px);`}
+  }
 `;
 
 export const InteractionContainer = styled.div`
